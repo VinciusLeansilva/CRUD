@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VoltScoot ⚡ Catálogo de Scooters Elétricas (GET)</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Barra de Navegação Multi-Páginas -->
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a href="index.html" class="brand">
+        <div class="brand-logo">⚡</div>
+        <div>
+          <span class="brand-title">VoltScoot <span class="brand-highlight">Elétricas</span></span>
+          <span class="brand-sub">Concessionária & Sistema CRUD Online</span>
+        </div>
+      </a>
+
+      <nav class="nav-menu">
+        <a href="index.html" class="nav-link">🏠 Início</a>
+        <a href="catalogo.html" class="nav-link active">🛵 Catálogo <span class="badge badge-get">GET</span></a>
+        <a href="cadastro.html" class="nav-link">➕ Cadastrar / Editar <span class="badge badge-post">POST</span> <span class="badge badge-put">PUT</span></a>
+        <a href="manutencao-patch.html" class="nav-link">⚡ Promoções & Estoque <span class="badge badge-patch">PATCH</span> <span class="badge badge-delete">DEL</span></a>
+        <a href="api-console.html" class="nav-link">🌐 API Online & Logs</a>
+      </nav>
+
+      <div class="api-status-pill">
+        <span class="status-dot"></span>
+        <span id="apiTopStatusText">API Online: Cloud REST</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Cabeçalho da Página -->
+  <section class="page-header">
+    <div class="container page-header-inner">
+      <div>
+        <span class="badge badge-get">MÉTODO HTTP: GET & GET /:id</span>
+        <h1 class="page-title" style="margin-top:0.4rem;">🛵 Catálogo Completo de Scooters Elétricas</h1>
+        <p class="page-desc">
+          Consulte todos os modelos disponíveis na API Online, filtre por marca, potência ou status, e clique em <strong>GET</strong> em qualquer card para buscar a ficha técnica individual (<code>GET /:id</code>).
+        </p>
+      </div>
+      <div style="display:flex; gap:0.65rem; flex-wrap:wrap;">
+        <button class="btn btn-get" onclick="carregarFrotaInicialGET()">
+          <span class="badge badge-get">GET</span> Atualizar Catálogo
+        </button>
+        <button class="btn btn-secondary" onclick="restaurarFrotaPadrao()">
+          ⚡ Restaurar 6 Scooters Padrão
+        </button>
+        <a href="cadastro.html" class="btn btn-post">
+          <span class="badge badge-post">POST</span> Nova Scooter
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <main class="container main-content">
+    <!-- Barra de Filtros e Pesquisa -->
+    <section class="card">
+      <div class="filter-bar">
+        <div class="input-group">
+          <label for="filtroBusca">🔍 Pesquisar por Modelo ou Marca:</label>
+          <input type="text" id="filtroBusca" placeholder="Ex: VoltScoot, Ninebot, ThunderMax..." oninput="aplicarFiltrosCatalogo()" />
+        </div>
+
+        <div class="input-group">
+          <label for="filtroMarca">Marca:</label>
+          <select id="filtroMarca" onchange="aplicarFiltrosCatalogo()">
+            <option value="TODAS">Todas as Marcas</option>
+            <option value="VoltScoot">VoltScoot</option>
+            <option value="Segway Ninebot">Segway Ninebot</option>
+            <option value="Watts Mobilidade">Watts Mobilidade</option>
+            <option value="Muuv Chopper">Muuv Chopper</option>
+            <option value="Xiaomi Mi Electric">Xiaomi Mi Electric</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="filtroStatus">Status:</label>
+          <select id="filtroStatus" onchange="aplicarFiltrosCatalogo()">
+            <option value="TODOS">Todos os Status</option>
+            <option value="Disponivel">Disponível</option>
+            <option value="Promocao">Em Promoção</option>
+            <option value="Lancamento">Lançamento</option>
+            <option value="Esgotada">Esgotada</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label for="filtroOrdem">Ordenar por:</label>
+          <select id="filtroOrdem" onchange="aplicarFiltrosCatalogo()">
+            <option value="padrao">Ordem Padrão</option>
+            <option value="menorPreco">Menor Preço</option>
+            <option value="maiorPotencia">Maior Potência (W)</option>
+            <option value="maiorAutonomia">Maior Autonomia (km)</option>
+          </select>
+        </div>
+
+        <div>
+          <span class="api-status-pill" id="catalogoTotalCount">6 scooters encontradas</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Grid Completo do Catálogo -->
+    <section id="catalogoScootersGrid" class="scooters-grid"></section>
+  </main>
+
+  <!-- Modal de Ficha Técnica Completa (GET /:id) -->
+  <div id="modalFichaTecnica" class="modal-overlay hidden" onclick="if(event.target===this) fecharModalFichaTecnica()">
+    <div class="modal-box" id="modalFichaConteudo"></div>
+  </div>
+
+  <!-- Rodapé -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>⚡ <strong>VoltScoot Scooters Elétricas</strong> — Catálogo Online (GET / GET :id)</div>
+      <div style="display:flex; gap:1rem;">
+        <a href="index.html">Início</a>
+        <a href="catalogo.html">Catálogo (GET)</a>
+        <a href="cadastro.html">Cadastro (POST/PUT)</a>
+        <a href="manutencao-patch.html">Ajustes (PATCH/DELETE)</a>
+        <a href="api-console.html">API Online</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

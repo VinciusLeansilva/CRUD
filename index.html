@@ -3,392 +3,196 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VoltScoot ⚡ Scooters Elétricas | CRUD Online (GET, POST, PUT, PATCH, DELETE)</title>
+  <title>VoltScoot ⚡ Scooters Elétricas | Início & Showroom</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- Cabeçalho do Site de Scooters Elétricas -->
+  <!-- Barra de Navegação Multi-Páginas -->
   <header class="topbar">
     <div class="container topbar-inner">
-      <div class="brand">
+      <a href="index.html" class="brand">
         <div class="brand-logo">⚡</div>
         <div>
-          <h1>VoltScoot <span class="brand-highlight">Scooters Elétricas</span> <span class="subtitle-badge">API ONLINE</span></h1>
-          <p class="brand-desc">Catálogo & Sistema CRUD Completo com <strong>GET</strong>, <strong>POST</strong>, <strong>PUT</strong>, <strong>PATCH</strong> e <strong>DELETE</strong></p>
+          <span class="brand-title">VoltScoot <span class="brand-highlight">Elétricas</span></span>
+          <span class="brand-sub">Concessionária & Sistema CRUD Online</span>
         </div>
-      </div>
-      <div class="method-pills">
-        <span class="badge badge-get" title="Listar / Buscar Scooter">GET</span>
-        <span class="badge badge-post" title="Cadastrar Nova Scooter">POST</span>
-        <span class="badge badge-put" title="Atualizar Scooter Completa">PUT</span>
-        <span class="badge badge-patch" title="Atualizar Apenas 1 Campo">PATCH</span>
-        <span class="badge badge-delete" title="Excluir Scooter">DELETE</span>
+      </a>
+
+      <nav class="nav-menu">
+        <a href="index.html" class="nav-link active">🏠 Início</a>
+        <a href="catalogo.html" class="nav-link">🛵 Catálogo <span class="badge badge-get">GET</span></a>
+        <a href="cadastro.html" class="nav-link">➕ Cadastrar / Editar <span class="badge badge-post">POST</span> <span class="badge badge-put">PUT</span></a>
+        <a href="manutencao-patch.html" class="nav-link">⚡ Promoções & Estoque <span class="badge badge-patch">PATCH</span> <span class="badge badge-delete">DEL</span></a>
+        <a href="api-console.html" class="nav-link">🌐 API Online & Logs</a>
+      </nav>
+
+      <div class="api-status-pill">
+        <span class="status-dot"></span>
+        <span id="apiTopStatusText">API Online: Cloud REST</span>
       </div>
     </div>
   </header>
 
-  <!-- Hero Section: Scooters Elétricas + Indicadores -->
-  <section class="hero-banner">
-    <div class="container hero-grid">
-      <div class="hero-text">
-        <span class="hero-tag">🔋 MOBILIDADE ELÉTRICA INTELIGENTE</span>
-        <h2>Gerencie sua Frota e Loja de <span>Scooters Elétricas</span> em Tempo Real</h2>
+  <!-- Hero Section -->
+  <section class="hero-home">
+    <div class="container hero-home-grid">
+      <div>
+        <span class="hero-tag">🔋 O FUTURO DA MOBILIDADE URBANA</span>
+        <h1>Acelere com <span>Zero Emissões</span> e Gestão 100% Online</h1>
         <p>
-          Adicione novos modelos com <strong>POST</strong>, consulte fichas técnicas com <strong>GET</strong>, edite fichas completas com <strong>PUT</strong>, aplique promoções ou ajuste preços parciais com <strong>PATCH</strong> e remova unidades com <strong>DELETE</strong> usando uma <strong>API Online</strong>.
+          Explore nossa linha de Scooters Elétricas de alta potência (de 940W até 5000W Dual Motor). Todo o catálogo deste site é alimentado em tempo real por requisições HTTP (<strong>GET</strong>, <strong>POST</strong>, <strong>PUT</strong>, <strong>PATCH</strong> e <strong>DELETE</strong>) conectadas à API Online.
         </p>
+        <div class="hero-cta-group">
+          <a href="catalogo.html" class="btn btn-primary">
+            🛵 Ver Catálogo Completo (GET)
+          </a>
+          <a href="cadastro.html" class="btn btn-secondary">
+            ➕ Cadastrar Nova Scooter (POST)
+          </a>
+          <a href="api-console.html" class="btn btn-ghost">
+            🌐 Configurar CrudCrud / API Online
+          </a>
+        </div>
       </div>
-      <div class="hero-stats">
-        <div class="stat-box">
-          <span class="stat-label">Modelos no Catálogo</span>
-          <strong class="stat-value" id="statTotalModelos">0</strong>
-        </div>
-        <div class="stat-box">
-          <span class="stat-label">Maior Autonomia</span>
-          <strong class="stat-value" id="statMaxAutonomia">0 km</strong>
-        </div>
-        <div class="stat-box">
-          <span class="stat-label">Potência Máxima</span>
-          <strong class="stat-value" id="statMaxPotencia">0 W</strong>
-        </div>
-        <div class="stat-box">
-          <span class="stat-label">Unidades em Estoque</span>
-          <strong class="stat-value" id="statTotalEstoque">0 un.</strong>
+
+      <div class="hero-showcase-box">
+        <img
+          src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=900&q=80"
+          alt="VoltScoot X1 Pro 3000W"
+          style="width:100%; height:240px; object-fit:cover; border-radius:12px; margin-bottom:0.9rem;"
+        />
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <span class="badge badge-post">DESTAQUE</span>
+            <h3 style="margin-top:0.3rem;">VoltScoot X1 Pro 3000W</h3>
+            <p style="font-size:0.8rem; color:#94a3b8;">Autonomia de 75 km • Bateria Lítio 60V Removível</p>
+          </div>
+          <div style="text-align:right;">
+            <span style="font-size:0.75rem; color:#94a3b8;">A partir de</span>
+            <div style="font-size:1.35rem; font-weight:800; color:#34d399;">R$ 12.490</div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
   <main class="container main-content">
-    <!-- Painel de Configuração da API Online -->
-    <section class="card config-card">
-      <div class="config-header">
-        <div>
-          <h2>🌐 Conexão com API Online (Ativa por Padrão)</h2>
-          <p>O site já está conectado a uma <strong>API REST Online</strong> pronta para uso, ou você pode colar seu próprio endpoint do <a href="https://crudcrud.com" target="_blank" rel="noopener">crudcrud.com</a>.</p>
-        </div>
-        <div class="mode-selector">
-          <button type="button" class="mode-btn active" id="btnModeOnline" onclick="selecionarModoAPI('online')">
-            🌐 API Online Pública (Pronta)
-          </button>
-          <button type="button" class="mode-btn" id="btnModeCrudCrud" onclick="selecionarModoAPI('crudcrud')">
-            🔥 CrudCrud.com (Seu Token)
-          </button>
-          <button type="button" class="mode-btn" id="btnModeLocal" onclick="selecionarModoAPI('local')">
-            💻 API Servidor Local
-          </button>
-        </div>
+    <!-- Indicadores em Tempo Real da API -->
+    <section class="hero-stats-grid">
+      <div class="stat-card">
+        <span class="stat-label">Modelos Cadastrados (GET)</span>
+        <strong class="stat-value" id="statTotalModelos">0</strong>
       </div>
-
-      <div class="config-controls">
-        <div class="input-group url-group">
-          <label for="apiUrlInput">URL do Endpoint da API Online:</label>
-          <input
-            type="text"
-            id="apiUrlInput"
-            value="https://jsonplaceholder.typicode.com/posts"
-            placeholder="Ex: https://crudcrud.com/api/SEU_TOKEN_AQUI/scooters"
-          />
-        </div>
-        <div class="config-actions">
-          <button type="button" class="btn btn-get" onclick="executarGETTodos()">
-            <span class="badge badge-get">GET</span> Sincronizar Scooters
-          </button>
-          <button type="button" class="btn btn-secondary" onclick="popularScootersExemplo()">
-            ⚡ Restaurar Frota Inicial
-          </button>
-        </div>
+      <div class="stat-card">
+        <span class="stat-label">Maior Autonomia</span>
+        <strong class="stat-value" id="statMaxAutonomia">0 km</strong>
       </div>
-
-      <div id="crudcrudHelp" class="help-banner hidden">
-        <strong>🔥 Como usar sua chave do CrudCrud.com:</strong>
-        1. Abra <a href="https://crudcrud.com" target="_blank" rel="noopener">https://crudcrud.com</a> e copie a URL gerada automaticamente.
-        2. Cole no campo acima adicionando <code>/scooters</code> ao final (ex: <code>https://crudcrud.com/api/9f8e7d6c5b.../scooters</code>).
-        3. Clique em <strong>⚡ Restaurar Frota Inicial</strong> para cadastrar as Scooters Elétricas na nuvem via <code>POST</code>!
+      <div class="stat-card">
+        <span class="stat-label">Maior Potência</span>
+        <strong class="stat-value" id="statMaxPotencia">0 W</strong>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Total em Estoque</span>
+        <strong class="stat-value" id="statTotalEstoque">0 un.</strong>
       </div>
     </section>
 
-    <!-- Grid Principal: Formulários à esquerda + Catálogo de Scooters e Console à direita -->
-    <div class="workspace-grid">
-      <!-- Coluna Esquerda: Operações POST, PUT, PATCH, GET ID, DELETE -->
-      <div class="forms-column">
-        
-        <!-- Card 1: POST & PUT (Cadastrar ou Atualizar Scooter Completa) -->
-        <section class="card">
-          <div class="card-header">
-            <h2>🛵 Cadastrar / Editar Scooter</h2>
-            <div class="header-badges">
-              <span class="badge badge-post">POST</span>
-              <span class="badge badge-put">PUT</span>
-            </div>
-          </div>
-          <p class="card-subtitle">
-            Use <strong>POST</strong> para adicionar uma nova Scooter Elétrica ou clique em <strong>PUT</strong> em um card para substituir a ficha completa.
-          </p>
+    <!-- Scooters em Destaque (Carregadas via GET) -->
+    <section class="card">
+      <div class="card-header">
+        <div>
+          <h2>🔥 Scooters Elétricas em Destaque</h2>
+          <p class="card-subtitle">Dados carregados automaticamente via requisição <code>GET</code> da API Online.</p>
+        </div>
+        <a href="catalogo.html" class="btn btn-get btn-sm">
+          Ver Todas no Catálogo →
+        </a>
+      </div>
 
-          <form id="crudForm" onsubmit="event.preventDefault()">
-            <input type="hidden" id="itemId" />
+      <div id="homeDestaquesGrid" class="scooters-grid"></div>
+    </section>
 
-            <div class="form-row">
-              <div class="input-group">
-                <label for="idDisplay">ID da Scooter Selecionada:</label>
-                <input type="text" id="idDisplay" placeholder="Novo Cadastro (Modo POST)" readonly class="readonly-input" />
-              </div>
-            </div>
+    <!-- Diferenciais VoltScoot -->
+    <section class="features-grid">
+      <div class="feature-item">
+        <div class="feature-icon">⚡</div>
+        <h3>Recarga em Tomada Comum</h3>
+        <p>Baterias de Lítio inteligentes que recarregam de 0% a 100% entre 4 e 6 horas em qualquer tomada 110V/220V.</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">💰</div>
+        <h3>Menos de R$ 0,03 por Km</h3>
+        <p>Economize até 92% em comparação com gasolina ou transporte por aplicativo no seu trajeto diário.</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🛡️</div>
+        <h3>Freios Hidráulicos & Alarme</h3>
+        <p>Segurança máxima com freios a disco nas duas rodas, painel digital LCD, trava antifurto e controle remoto.</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🌐</div>
+        <h3>CRUD Completo Integrado</h3>
+        <p>Gerencie toda a frota usando <strong>GET</strong>, <strong>POST</strong>, <strong>PUT</strong>, <strong>PATCH</strong> e <strong>DELETE</strong> em páginas dedicadas.</p>
+      </div>
+    </section>
 
-            <div class="form-row">
-              <div class="input-group">
-                <label for="modelo">Modelo da Scooter Elétrica *</label>
-                <input type="text" id="modelo" placeholder="Ex: VoltScoot X1 Pro 3000W" required />
-              </div>
-            </div>
+    <!-- Calculadora Interativa de Economia -->
+    <section class="card">
+      <div class="card-header">
+        <div>
+          <h2>🧮 Simulador de Economia: Scooter Elétrica vs. Combustível</h2>
+          <p class="card-subtitle">Descubra quanto você economiza trocando um veículo a gasolina por uma Scooter Elétrica VoltScoot.</p>
+        </div>
+      </div>
 
-            <div class="form-row two-cols">
-              <div class="input-group">
-                <label for="marca">Marca / Linha *</label>
-                <select id="marca" required>
-                  <option value="VoltScoot">VoltScoot</option>
-                  <option value="Xiaomi Mi Electric">Xiaomi Mi Electric</option>
-                  <option value="Segway Ninebot">Segway Ninebot</option>
-                  <option value="Watts Mobilidade">Watts Mobilidade</option>
-                  <option value="Muuv Chopper">Muuv Chopper</option>
-                </select>
-              </div>
-              <div class="input-group">
-                <label for="status">Status na Loja *</label>
-                <select id="status" required>
-                  <option value="Disponivel">Disponível</option>
-                  <option value="Promocao">Em Promoção</option>
-                  <option value="Lancamento">Lançamento</option>
-                  <option value="Esgotada">Esgotada</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="form-row three-cols">
-              <div class="input-group">
-                <label for="potencia">Potência (W) *</label>
-                <input type="number" id="potencia" step="50" min="100" placeholder="3000" required />
-              </div>
-              <div class="input-group">
-                <label for="autonomia">Autonomia (km) *</label>
-                <input type="number" id="autonomia" step="1" min="5" placeholder="70" required />
-              </div>
-              <div class="input-group">
-                <label for="velocidadeMax">Vel. Máx (km/h) *</label>
-                <input type="number" id="velocidadeMax" step="1" min="10" placeholder="75" required />
-              </div>
-            </div>
-
-            <div class="form-row two-cols">
-              <div class="input-group">
-                <label for="preco">Preço (R$) *</label>
-                <input type="number" id="preco" step="0.01" min="0" placeholder="11990.00" required />
-              </div>
-              <div class="input-group">
-                <label for="estoque">Unidades em Estoque *</label>
-                <input type="number" id="estoque" step="1" min="0" placeholder="10" required />
-              </div>
-            </div>
-
-            <div class="form-row">
-              <div class="input-group">
-                <label for="imagem">Foto / Visual da Scooter:</label>
-                <select id="imagem">
-                  <option value="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=700&q=80">Scooter Urbana Preta Fosca (Padrão)</option>
-                  <option value="https://images.unsplash.com/photo-1571068316344-75bc76f77890?auto=format&fit=crop&w=700&q=80">Patinete / Scooter Compacta Street</option>
-                  <option value="https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=700&q=80">Scooter Esportiva Alta Potência</option>
-                  <option value="https://images.unsplash.com/photo-1591637333184-19aa84b3e01f?auto=format&fit=crop&w=700&q=80">Scooter Retrô Elétrica</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="form-actions">
-              <button type="button" class="btn btn-post" onclick="executarPOST()">
-                <span class="badge badge-post">POST</span> Criar Scooter
-              </button>
-              <button type="button" class="btn btn-put" onclick="executarPUT()">
-                <span class="badge badge-put">PUT</span> Atualizar Tudo
-              </button>
-              <button type="button" class="btn btn-ghost" onclick="limparFormulario()">
-                Limpar
-              </button>
-            </div>
-          </form>
-        </section>
-
-        <!-- Card 2: PATCH (Atualização Parcial de 1 Campo da Scooter) -->
-        <section class="card patch-card">
-          <div class="card-header">
-            <h2>⚡ Ajuste Parcial Rápido (PATCH)</h2>
-            <span class="badge badge-patch">PATCH</span>
-          </div>
-          <p class="card-subtitle">
-            O método <strong>PATCH</strong> modifica <em>apenas um campo específico</em> da Scooter (ex: alterar só o Preço, só a Autonomia ou só o Status) sem reenviar o objeto completo.
-          </p>
-
-          <form id="patchForm" onsubmit="event.preventDefault(); executarPATCH();">
-            <div class="form-row">
-              <div class="input-group">
-                <label for="patchId">ID da Scooter Alvo *</label>
-                <input type="text" id="patchId" placeholder="Clique em 'PATCH' num card ou digite o ID" required />
-              </div>
-            </div>
-
-            <div class="form-row two-cols">
-              <div class="input-group">
-                <label for="patchCampo">Campo para Modificar *</label>
-                <select id="patchCampo" onchange="atualizarPlaceholderPatch()">
-                  <option value="preco">Preço (R$)</option>
-                  <option value="estoque">Estoque (Unidades)</option>
-                  <option value="status">Status (Disponivel / Promocao / Esgotada)</option>
-                  <option value="autonomia">Autonomia da Bateria (km)</option>
-                  <option value="potencia">Potência do Motor (W)</option>
-                  <option value="velocidadeMax">Velocidade Máxima (km/h)</option>
-                  <option value="modelo">Nome do Modelo</option>
-                </select>
-              </div>
-              <div class="input-group">
-                <label for="patchValor">Novo Valor *</label>
-                <input type="text" id="patchValor" placeholder="Ex: 9490.00" required />
-              </div>
-            </div>
-
-            <div class="form-actions">
-              <button type="submit" class="btn btn-patch full-width">
-                <span class="badge badge-patch">PATCH</span> Enviar Atualização Parcial
-              </button>
-            </div>
-          </form>
-        </section>
-
-        <!-- Card 3: Busca GET por ID e Exclusão DELETE por ID -->
-        <section class="card">
-          <div class="card-header">
-            <h2>🔍 Consulta ou Exclusão por ID</h2>
-            <div class="header-badges">
-              <span class="badge badge-get">GET /:id</span>
-              <span class="badge badge-delete">DELETE /:id</span>
+      <div class="calc-grid">
+        <div>
+          <div class="form-row">
+            <div class="input-group">
+              <label for="calcKmDia">Distância percorrida por dia: <strong id="calcKmValor" style="color:#34d399;">30 km/dia</strong></label>
+              <input type="range" id="calcKmDia" min="5" max="100" step="5" value="30" oninput="calcularEconomiaScooter()" />
             </div>
           </div>
           <div class="form-row">
             <div class="input-group">
-              <label for="buscaIdInput">ID da Scooter:</label>
-              <input type="text" id="buscaIdInput" placeholder="Ex: scoot-101" />
+              <label for="calcPrecoGas">Preço médio do litro da gasolina (R$):</label>
+              <input type="number" id="calcPrecoGas" step="0.10" value="6.10" oninput="calcularEconomiaScooter()" />
             </div>
           </div>
-          <div class="form-actions">
-            <button type="button" class="btn btn-get" onclick="executarGETPorId()">
-              <span class="badge badge-get">GET</span> Buscar por ID
-            </button>
-            <button type="button" class="btn btn-delete" onclick="executarDELETEPorInput()">
-              <span class="badge badge-delete">DELETE</span> Excluir por ID
-            </button>
-          </div>
-        </section>
+        </div>
+
+        <div class="calc-result-box">
+          <span class="stat-label">Economia Estimada por Mês</span>
+          <div class="calc-big-value" id="resEconomiaMes">R$ 0,00</div>
+          <p style="font-size:0.86rem; color:#cbd5e1;">
+            Em 1 ano você economiza aproximadamente <strong id="resEconomiaAno" style="color:#38bdf8;">R$ 0,00</strong>!
+          </p>
+        </div>
       </div>
-
-      <!-- Coluna Direita: Vitrine de Scooters Elétricas + Tabela + Console HTTP -->
-      <div class="data-column">
-        
-        <!-- Vitrine de Cards das Scooters Elétricas -->
-        <section class="card">
-          <div class="card-header">
-            <div>
-              <h2>⚡ Vitrine de Scooters Elétricas</h2>
-              <p class="card-subtitle">Teste os 5 métodos HTTP diretamente nos cards abaixo ou na tabela técnica.</p>
-            </div>
-            <span class="counter-pill" id="totalRegistros">0 scooters</span>
-          </div>
-
-          <div id="scootersGrid" class="scooters-grid">
-            <!-- Renderizado dinamicamente via JS -->
-          </div>
-        </section>
-
-        <!-- Tabela Técnica Resumida -->
-        <section class="card table-card">
-          <div class="card-header">
-            <h2>📋 Tabela Técnica da Frota (Visão Banco de Dados)</h2>
-          </div>
-          <div class="table-responsive">
-            <table class="crud-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Modelo / Marca</th>
-                  <th>Motor / Autonomia</th>
-                  <th>Preço</th>
-                  <th>Estoque</th>
-                  <th>Status</th>
-                  <th class="text-right">Operações HTTP</th>
-                </tr>
-              </thead>
-              <tbody id="tabelaCorpo">
-                <tr>
-                  <td colspan="7" class="empty-state">Carregando frota de scooters...</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        <!-- Inspetor / Console de Requisições HTTP Online -->
-        <section class="card console-card">
-          <div class="card-header">
-            <div>
-              <h2>📡 Monitor de Requisições HTTP Online (Live Inspector)</h2>
-              <p class="card-subtitle">Inspecione em tempo real o método enviado (`GET`, `POST`, `PUT`, `PATCH`, `DELETE`), URL, Status e JSON.</p>
-            </div>
-            <button type="button" class="btn btn-ghost btn-sm" onclick="limparLogHTTP()">Limpar Log</button>
-          </div>
-
-          <div class="http-inspector">
-            <div class="http-meta">
-              <span class="badge badge-get" id="logMethod">GET</span>
-              <code class="http-url" id="logUrl">https://...</code>
-              <span class="http-status status-ok" id="logStatus">200 OK</span>
-              <span class="http-time" id="logTime">0ms</span>
-            </div>
-            <div class="http-panes">
-              <div class="http-pane">
-                <div class="pane-title">📤 Request Body (JSON Enviado)</div>
-                <pre id="logReqBody">// Nenhuma requisição com body enviada ainda</pre>
-              </div>
-              <div class="http-pane">
-                <div class="pane-title">📥 Response Body (JSON Recebido da API Online)</div>
-                <pre id="logResBody">// Aguardando resposta...</pre>
-              </div>
-            </div>
-          </div>
-
-          <div class="history-header">Histórico de Requisições HTTP Realizadas:</div>
-          <div class="http-history" id="httpHistoryList"></div>
-        </section>
-
-        <!-- Aba de Código JavaScript dos 5 Métodos -->
-        <section class="card code-reference-card">
-          <div class="card-header">
-            <h2>💻 Código JavaScript (Fetch API) — Scooters Elétricas</h2>
-            <span class="subtitle-badge">Código Fonte</span>
-          </div>
-          <div class="code-tabs">
-            <button class="code-tab active" onclick="mostrarCodigoExemplo('GET', this)">GET</button>
-            <button class="code-tab" onclick="mostrarCodigoExemplo('POST', this)">POST</button>
-            <button class="code-tab" onclick="mostrarCodigoExemplo('PUT', this)">PUT</button>
-            <button class="code-tab" onclick="mostrarCodigoExemplo('PATCH', this)">PATCH</button>
-            <button class="code-tab" onclick="mostrarCodigoExemplo('DELETE', this)">DELETE</button>
-          </div>
-          <pre class="code-preview" id="codePreviewBox"></pre>
-        </section>
-      </div>
-    </div>
+    </section>
   </main>
 
-  <!-- Toast de Notificação -->
-  <div id="toastContainer" class="toast-container"></div>
+  <!-- Modal de Ficha Técnica (GET /:id) -->
+  <div id="modalFichaTecnica" class="modal-overlay hidden" onclick="if(event.target===this) fecharModalFichaTecnica()">
+    <div class="modal-box" id="modalFichaConteudo"></div>
+  </div>
+
+  <!-- Rodapé -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>⚡ <strong>VoltScoot Scooters Elétricas</strong> — Projeto Multi-Páginas CRUD (GET, POST, PUT, PATCH, DELETE)</div>
+      <div style="display:flex; gap:1rem;">
+        <a href="index.html">Início</a>
+        <a href="catalogo.html">Catálogo (GET)</a>
+        <a href="cadastro.html">Cadastro (POST/PUT)</a>
+        <a href="manutencao-patch.html">Ajustes (PATCH/DELETE)</a>
+        <a href="api-console.html">API Online</a>
+      </div>
+    </div>
+  </footer>
 
   <script src="script.js"></script>
 </body>

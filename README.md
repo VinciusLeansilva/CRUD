@@ -1,20 +1,20 @@
-# ⚡ VoltScoot — Site de Scooters Elétricas com CRUD Online (`GET`, `POST`, `PUT`, `PATCH`, `DELETE`)
+# ⚡ VoltScoot — Site Multi-Páginas de Scooters Elétricas (CRUD Online)
 
-Site completo de Concessionária e Gestão de Frota de **Scooters Elétricas** conectado por padrão a uma **API Online**, com suporte aos 5 verbos HTTP:
-
-- **`GET`** — Lista todas as Scooters Elétricas do catálogo ou consulta a ficha técnica de uma scooter por ID (`GET /:id`)
-- **`POST`** — Cadastra uma nova Scooter Elétrica (Modelo, Marca, Potência em W, Autonomia em km, Velocidade Máx em km/h, Preço, Estoque, Status e Foto)
-- **`PUT`** — Substitui/atualiza a ficha técnica **completa** de uma Scooter existente (`PUT /:id`)
-- **`PATCH`** — Atualização **parcial** de apenas 1 campo (ex.: alterar somente o Preço, Autonomia ou Estoque, além de botões rápidos nos cards de `-10% Preço via PATCH` e `+1 Estoque via PATCH`)
-- **`DELETE`** — Remove uma Scooter Elétrica pelo ID (`DELETE /:id`)
+Site completo de Concessionária e Gestão de Frota de **Scooters Elétricas** dividido em **5 páginas interligadas**, conectado por padrão a uma **API Online** e suportando os 5 métodos HTTP (`GET`, `POST`, `PUT`, `PATCH` e `DELETE`).
 
 ---
 
-## 🌐 Modos de API Online Disponíveis no Site
+## 🗺️ Estrutura das 5 Páginas do Site
 
-1. **🌐 API Online Pública (Ativa por Padrão)**:
-   - Já vem configurada no topo com `https://jsonplaceholder.typicode.com/posts` combinada com sincronização de frota, disparando requisições `fetch()` HTTPS reais pela internet para `GET`, `POST`, `PUT`, `PATCH` e `DELETE` sem exigir cadastro ou token.
-2. **🔥 CrudCrud.com (Seu Token na Nuvem)**:
-   - Clique no botão **"🔥 CrudCrud.com (Seu Token)"** no topo da página, cole sua URL gerada em [https://crudcrud.com](https://crudcrud.com) com `/scooters` ao final (ex.: `https://crudcrud.com/api/SEU_TOKEN/scooters`) e clique em **⚡ Restaurar Frota Inicial**.
-3. **💻 API Servidor Local (`http://localhost:3000/api/scooters`)**:
-   - Caso queira rodar localmente com `node server.js`.
+1. **`index.html` — Início & Showroom Oficial**:
+   - Banner principal, indicadores da frota em tempo real, vitrine de Scooters em destaque (carregadas via `GET`), diferenciais e **Simulador Interativo de Economia Mensal/Anual** (Scooter Elétrica vs. Gasolina).
+2. **`catalogo.html` — Catálogo Completo & Ficha Técnica (`GET` e `GET /:id`)**:
+   - Busca por nome/modelo, filtros por Marca, Status e Ordenação (Menor Preço, Maior Potência, Maior Autonomia).
+   - Ao clicar em **`GET`** em qualquer card, executa `GET /:id` e abre um **Modal de Ficha Técnica Completa** com o JSON retornado pela API Online.
+3. **`cadastro.html` — Cadastrar Nova (`POST`) & Editar Scooter Inteira (`PUT`)**:
+   - Formulário completo para criar uma nova Scooter Elétrica com **`POST`** ou selecionar uma Scooter existente para substituir todos os seus dados com **`PUT`**.
+   - Conta com **Pré-visualização do Card em Tempo Real (Live Preview)** enquanto você preenche os campos.
+4. **`manutencao-patch.html` — Central de Promoções, Estoque (`PATCH`) & Exclusão (`DELETE`)**:
+   - Painel dedicado ao método **`PATCH` (Atualização Parcial)** para alterar apenas 1 campo específico (ex.: só `preco`, só `estoque`, só `status` ou `autonomia`) sem reenviar o objeto completo, além de botões rápidos em 1 clique e exclusão via **`DELETE`**.
+5. **`api-console.html` — Configurador da API Online (`CrudCrud.com` / Cloud) & Logs HTTP**:
+   - Permite alternar entre a **API Online Pública** (ativa por padrão), o seu endpoint do **CrudCrud.com** ou o **Servidor Local**, além de exibir o histórico completo de requisições HTTP feitas no site.

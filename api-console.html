@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VoltScoot ⚡ API Online, CrudCrud.com & Logs HTTP</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Barra de Navegação Multi-Páginas -->
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a href="index.html" class="brand">
+        <div class="brand-logo">⚡</div>
+        <div>
+          <span class="brand-title">VoltScoot <span class="brand-highlight">Elétricas</span></span>
+          <span class="brand-sub">Concessionária & Sistema CRUD Online</span>
+        </div>
+      </a>
+
+      <nav class="nav-menu">
+        <a href="index.html" class="nav-link">🏠 Início</a>
+        <a href="catalogo.html" class="nav-link">🛵 Catálogo <span class="badge badge-get">GET</span></a>
+        <a href="cadastro.html" class="nav-link">➕ Cadastrar / Editar <span class="badge badge-post">POST</span> <span class="badge badge-put">PUT</span></a>
+        <a href="manutencao-patch.html" class="nav-link">⚡ Promoções & Estoque <span class="badge badge-patch">PATCH</span> <span class="badge badge-delete">DEL</span></a>
+        <a href="api-console.html" class="nav-link active">🌐 API Online & Logs</a>
+      </nav>
+
+      <div class="api-status-pill">
+        <span class="status-dot"></span>
+        <span id="apiTopStatusText">API Online: Cloud REST</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Cabeçalho da Página -->
+  <section class="page-header">
+    <div class="container page-header-inner">
+      <div>
+        <div style="display:flex; gap:0.4rem; flex-wrap:wrap;">
+          <span class="badge badge-get">GET</span>
+          <span class="badge badge-post">POST</span>
+          <span class="badge badge-put">PUT</span>
+          <span class="badge badge-patch">PATCH</span>
+          <span class="badge badge-delete">DELETE</span>
+        </div>
+        <h1 class="page-title" style="margin-top:0.4rem;">🌐 Configurador da API Online & Monitor de Requisições</h1>
+        <p class="page-desc">
+          Alterne entre a <strong>API Online Pública</strong> (já configurada por padrão), o seu endpoint pessoal do <strong>CrudCrud.com</strong> ou o <strong>Servidor Local</strong>, e acompanhe todas as chamadas HTTP feitas nas páginas do site.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <main class="container main-content">
+    <!-- Configuração do Endpoint da API -->
+    <section class="card">
+      <div class="card-header">
+        <div>
+          <h2>🔗 Endpoint da API REST (Compartilhado em Todas as Páginas)</h2>
+          <p class="card-subtitle">Qualquer alteração feita aqui vale automaticamente para o Início, Catálogo, Cadastro e Promoções.</p>
+        </div>
+        <div style="display:flex; gap:0.45rem; flex-wrap:wrap;">
+          <button class="btn btn-primary btn-sm" onclick="escolherPresetAPI('online')">🌐 Usar API Online Pública</button>
+          <button class="btn btn-put btn-sm" onclick="escolherPresetAPI('crudcrud')">🔥 Usar CrudCrud.com</button>
+          <button class="btn btn-get btn-sm" onclick="escolherPresetAPI('local')">💻 Usar Servidor Local</button>
+        </div>
+      </div>
+
+      <div style="display:flex; gap:0.8rem; align-items:flex-end; flex-wrap:wrap; margin-top:0.5rem;">
+        <div class="input-group" style="flex:1; min-width:280px;">
+          <label for="apiUrlInput">URL Ativa da API:</label>
+          <input type="text" id="apiUrlInput" placeholder="https://crudcrud.com/api/SEU_TOKEN_AQUI/scooters" />
+        </div>
+        <button class="btn btn-post" onclick="salvarEndpointCustomizado()">
+          💾 Salvar Endpoint & Testar GET
+        </button>
+        <button class="btn btn-secondary" onclick="restaurarFrotaPadrao()">
+          ⚡ Popular 6 Scooters na API
+        </button>
+      </div>
+
+      <div style="margin-top:1rem; padding:0.85rem 1rem; background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.3); border-radius:8px; font-size:0.83rem; color:#cbd5e1;">
+        <strong>💡 Dica para CrudCrud.com:</strong> Acesse <a href="https://crudcrud.com" target="_blank" rel="noopener">https://crudcrud.com</a>, copie seu link único, adicione <code>/scooters</code> ao final (ex.: <code>https://crudcrud.com/api/4a8b9c.../scooters</code>), cole acima e clique em <strong>⚡ Popular 6 Scooters na API</strong>!
+      </div>
+    </section>
+
+    <!-- Inspetor da Última Requisição e Histórico Global -->
+    <section class="card">
+      <div class="card-header">
+        <div>
+          <h2>📡 Inspetor HTTP & Histórico Global de Chamadas</h2>
+          <p class="card-subtitle">Mostra todas as operações <code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>PATCH</code> e <code>DELETE</code> disparadas durante a navegação.</p>
+        </div>
+        <button class="btn btn-ghost btn-sm" onclick="limparHistoricoLogs()">Limpar Histórico</button>
+      </div>
+
+      <div class="http-inspector" style="margin-bottom:1.25rem;">
+        <div class="http-meta">
+          <span class="badge badge-get" id="logMethod">GET</span>
+          <code class="http-url" id="logUrl">https://...</code>
+          <span class="http-status status-ok" id="logStatus">200 OK</span>
+          <span class="http-time" id="logTime">0ms</span>
+        </div>
+        <div class="http-panes">
+          <div class="http-pane">
+            <div class="pane-title">📤 Request Body (Enviado)</div>
+            <pre id="logReqBody">// Sem body</pre>
+          </div>
+          <div class="http-pane">
+            <div class="pane-title">📥 Response Body (Recebido)</div>
+            <pre id="logResBody">// Aguardando...</pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="pane-title">📜 Últimas Requisições Realizadas no Site:</div>
+      <div id="httpHistoryList" style="display:flex; flex-direction:column; gap:0.4rem; max-height:260px; overflow-y:auto;"></div>
+    </section>
+
+    <!-- Resumo Explicativo dos 5 Métodos HTTP no Projeto -->
+    <section class="card">
+      <div class="card-header">
+        <h2>📚 Resumo dos 5 Métodos HTTP Implementados no Site</h2>
+      </div>
+      <div class="table-responsive">
+        <table class="crud-table">
+          <thead>
+            <tr>
+              <th>Método</th>
+              <th>Rota REST</th>
+              <th>Função no Site VoltScoot</th>
+              <th>Onde Testar</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><span class="badge badge-get">GET</span></td>
+              <td><code>GET /scooters</code> e <code>GET /scooters/:id</code></td>
+              <td>Lista todas as Scooters Elétricas e abre o modal com a ficha técnica individual.</td>
+              <td><a href="catalogo.html">Página Catálogo</a></td>
+            </tr>
+            <tr>
+              <td><span class="badge badge-post">POST</span></td>
+              <td><code>POST /scooters</code></td>
+              <td>Cria e cadastra uma nova Scooter Elétrica enviando o objeto JSON completo.</td>
+              <td><a href="cadastro.html">Página Cadastrar / Editar</a></td>
+            </tr>
+            <tr>
+              <td><span class="badge badge-put">PUT</span></td>
+              <td><code>PUT /scooters/:id</code></td>
+              <td>Substitui/atualiza a ficha técnica completa de uma Scooter existente.</td>
+              <td><a href="cadastro.html">Página Cadastrar / Editar</a></td>
+            </tr>
+            <tr>
+              <td><span class="badge badge-patch">PATCH</span></td>
+              <td><code>PATCH /scooters/:id</code></td>
+              <td>Atualiza parcialmente apenas 1 campo (ex.: aplicar desconto no preço ou somar +1 no estoque).</td>
+              <td><a href="manutencao-patch.html">Página Promoções & Estoque</a></td>
+            </tr>
+            <tr>
+              <td><span class="badge badge-delete">DELETE</span></td>
+              <td><code>DELETE /scooters/:id</code></td>
+              <td>Remove permanentemente uma Scooter Elétrica pelo seu ID.</td>
+              <td><a href="manutencao-patch.html">Página Promoções & Estoque</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Rodapé -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div>⚡ <strong>VoltScoot Scooters Elétricas</strong> — Laboratório HTTP & API Online</div>
+      <div style="display:flex; gap:1rem;">
+        <a href="index.html">Início</a>
+        <a href="catalogo.html">Catálogo (GET)</a>
+        <a href="cadastro.html">Cadastro (POST/PUT)</a>
+        <a href="manutencao-patch.html">Ajustes (PATCH/DELETE)</a>
+        <a href="api-console.html">API Online</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
