@@ -1,8 +1,4 @@
-/**
- * Servidor VoltScoot ⚡ Scooters Elétricas (Zero dependências externas)
- * Suporta: GET, POST, PUT, PATCH e DELETE em /api/scooters
- * Também serve o site em http://localhost:3000
- */
+
 
 const http = require('http');
 const fs = require('fs');
