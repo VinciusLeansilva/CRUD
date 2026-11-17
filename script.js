@@ -1,125 +1,196 @@
-/**
- * ============================================================================
- * VOLTSCOOT ⚡ SISTEMA MULTI-PÁGINAS DE SCOOTERS ELÉTRICAS (CRUD API ONLINE)
- * Páginas suportadas:
- * 1. index.html            -> Home / Showroom & Calculadora de Economia (GET)
- * 2. catalogo.html         -> Catálogo Completo, Filtros & Ficha Técnica (GET, GET/:id, PATCH, DELETE)
- * 3. cadastro.html         -> Cadastrar Nova (POST) & Editar Ficha Completa (PUT)
- * 4. manutencao-patch.html -> Ajustes Parciais, Promoções (PATCH) & Exclusão (DELETE)
- * 5. api-console.html      -> Configuração da API Online (CrudCrud / Cloud) & Inspetor HTTP
- * ============================================================================
- */
-
-const STORAGE_KEY_SCOOTERS = 'voltscoot_scooters_db_v3';
-const STORAGE_KEY_API_URL = 'voltscoot_api_url_v3';
-const STORAGE_KEY_HTTP_LOGS = 'voltscoot_http_logs_v3';
+const STORAGE_KEY_SCOOTERS = 'voltscoot_erp_scooters_v4';
+const STORAGE_KEY_PEDIDOS = 'voltscoot_erp_pedidos_v4';
+const STORAGE_KEY_CART = 'voltscoot_erp_cart_v4';
+const STORAGE_KEY_API_URL = 'voltscoot_erp_api_url_v4';
+const STORAGE_KEY_LOGS = 'voltscoot_erp_logs_v4';
 
 const DEFAULT_ONLINE_API = 'https://jsonplaceholder.typicode.com/posts';
-let frotaCache = [];
 
-// Frota inicial completa de Scooters Elétricas
+let frotaCache = [];
+let comparadorIds = [];
+
 const SCOOTERS_INICIAIS = [
   {
-    _id: '1',
-    modelo: 'VoltScoot X1 Pro 3000W',
+    _id: '101',
+    sku: 'VS-X1P-3000',
+    modelo: 'VoltScoot X1 Pro Dual',
     marca: 'VoltScoot',
+    categoria: 'Sport',
     potencia: 3000,
-    autonomia: 75,
-    velocidadeMax: 70,
-    bateria: '60V 30Ah Lítio Removível',
-    tempoRecarga: '4.5 horas',
-    cor: 'Preto Fosco Neon',
+    torque: 145,
+    voltagem: 60,
+    amperagem: 30,
+    autonomia: 85,
+    velocidadeMax: 75,
+    tempoRecarga: 4.5,
+    peso: 68,
+    cargaMax: 180,
+    freios: 'Disco Hidráulico CBS Duplo',
+    pneus: '12" Tubeless Sem Câmara',
+    protecaoIp: 'IP65',
+    cor: 'Preto Fosco / Verde',
+    garantia: '24 meses',
+    custo: 8200.00,
     preco: 12490.00,
-    estoque: 6,
+    estoque: 8,
     status: 'Disponivel',
-    descricao: 'Scooter elétrica urbana de alto desempenho com freios a disco hidráulicos, painel digital LCD e alarme integrado.',
-    imagem: 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=700&q=80'
+    imagem: 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=800&q=80'
   },
   {
-    _id: '2',
-    modelo: 'Ninebot Max G2 Electric',
+    _id: '102',
+    sku: 'SG-MAX-G2',
+    modelo: 'Ninebot Max G2 Pro',
     marca: 'Segway Ninebot',
+    categoria: 'Urbana',
     potencia: 1000,
+    torque: 55,
+    voltagem: 36,
+    amperagem: 15.3,
     autonomia: 70,
     velocidadeMax: 35,
-    bateria: '36V 15.3Ah Smart BMS',
-    tempoRecarga: '5 horas',
+    tempoRecarga: 5.0,
+    peso: 24,
+    cargaMax: 120,
+    freios: 'Tambor Dianteiro + E-ABS',
+    pneus: '10" Autorregenerativo Gel',
+    protecaoIp: 'IPX5',
     cor: 'Cinza Grafite',
+    garantia: '12 meses',
+    custo: 3900.00,
     preco: 5890.00,
-    estoque: 12,
+    estoque: 14,
     status: 'Promocao',
-    descricao: 'Ideal para deslocamento diário na cidade, dobrável em 3 segundos, suspensão dupla e pneus autorregenerativos.',
-    imagem: 'https://images.unsplash.com/photo-1571068316344-75bc76f77890?auto=format&fit=crop&w=700&q=80'
+    imagem: 'https://images.unsplash.com/photo-1571068316344-75bc76f77890?auto=format&fit=crop&w=800&q=80'
   },
   {
-    _id: '3',
-    modelo: 'ThunderMax Dual Motor 5000W',
+    _id: '103',
+    sku: 'WT-THU-5000',
+    modelo: 'ThunderMax AWD 5000W',
     marca: 'Watts Mobilidade',
+    categoria: 'Performance',
     potencia: 5000,
-    autonomia: 110,
-    velocidadeMax: 90,
-    bateria: '72V 45Ah Dupla Célula',
-    tempoRecarga: '6 horas',
-    cor: 'Vermelho Racing',
+    torque: 210,
+    voltagem: 72,
+    amperagem: 45,
+    autonomia: 120,
+    velocidadeMax: 95,
+    tempoRecarga: 6.0,
+    peso: 84,
+    cargaMax: 200,
+    freios: 'Hidráulico ABS 4 Pistões',
+    pneus: '13" Pirelli Urbano',
+    protecaoIp: 'IP67',
+    cor: 'Vermelho Metálico',
+    garantia: '24 meses',
+    custo: 13400.00,
     preco: 18990.00,
     estoque: 3,
     status: 'Lancamento',
-    descricao: 'Potência extrema com tração dupla nas duas rodas, amortecedor invertido e autonomia de até 110 km com uma única carga.',
-    imagem: 'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=700&q=80'
+    imagem: 'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=800&q=80'
   },
   {
-    _id: '4',
-    modelo: 'Chopper Street Harley 2000W',
+    _id: '104',
+    sku: 'MV-CHP-2000',
+    modelo: 'Chopper Cruiser 2000W',
     marca: 'Muuv Chopper',
+    categoria: 'Chopper',
     potencia: 2000,
-    autonomia: 60,
-    velocidadeMax: 55,
-    bateria: '60V 20Ah Lítio',
-    tempoRecarga: '4 horas',
-    cor: 'Azul Metálico',
+    torque: 115,
+    voltagem: 60,
+    amperagem: 25,
+    autonomia: 65,
+    velocidadeMax: 60,
+    tempoRecarga: 4.0,
+    peso: 72,
+    cargaMax: 180,
+    freios: 'Disco Hidráulico Ventilado',
+    pneus: '18x9.5" Fat Tire',
+    protecaoIp: 'IP54',
+    cor: 'Azul Noturno',
+    garantia: '18 meses',
+    custo: 6500.00,
     preco: 9790.00,
     estoque: 5,
     status: 'Disponivel',
-    descricao: 'Design estilo custom chopper com pneus largos fat-tire de 18 polegadas, banco duplo confortável e farol full LED.',
-    imagem: 'https://images.unsplash.com/photo-1591637333184-19aa84b3e01f?auto=format&fit=crop&w=700&q=80'
+    imagem: 'https://images.unsplash.com/photo-1591637333184-19aa84b3e01f?auto=format&fit=crop&w=800&q=80'
   },
   {
-    _id: '5',
-    modelo: 'Mi Electric Scooter 4 Ultra',
+    _id: '105',
+    sku: 'XM-4U-940',
+    modelo: 'Xiaomi Scooter 4 Ultra',
     marca: 'Xiaomi Mi Electric',
+    categoria: 'Urbana',
     potencia: 940,
+    torque: 48,
+    voltagem: 48,
+    amperagem: 12.5,
     autonomia: 70,
     velocidadeMax: 25,
-    bateria: '48V 12Ah Ultra Durável',
-    tempoRecarga: '4 horas',
-    cor: 'Prata Espacial',
+    tempoRecarga: 4.0,
+    peso: 24.5,
+    cargaMax: 120,
+    freios: 'E-ABS + Disco Traseiro',
+    pneus: '10" Xiaomi DuraGel',
+    protecaoIp: 'IP55',
+    cor: 'Prata Titânio',
+    garantia: '12 meses',
+    custo: 3100.00,
     preco: 4990.00,
-    estoque: 9,
+    estoque: 11,
     status: 'Disponivel',
-    descricao: 'Estrutura em liga de alumínio aeroespacial, certificação IP55 contra água e poeira e conectividade via aplicativo.',
-    imagem: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=700&q=80'
+    imagem: 'https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80'
   },
   {
-    _id: '6',
-    modelo: 'VoltScoot Cargo Delivery 2500W',
+    _id: '106',
+    sku: 'VS-CRG-2500',
+    modelo: 'VoltScoot Cargo Fleet 2500W',
     marca: 'VoltScoot',
+    categoria: 'Cargo',
     potencia: 2500,
-    autonomia: 95,
-    velocidadeMax: 60,
-    bateria: '60V 40Ah Long Range',
-    tempoRecarga: '5 horas',
-    cor: 'Verde Elétrico',
+    torque: 138,
+    voltagem: 60,
+    amperagem: 40,
+    autonomia: 105,
+    velocidadeMax: 65,
+    tempoRecarga: 5.0,
+    peso: 76,
+    cargaMax: 230,
+    freios: 'Hidráulico Duplo Reforçado',
+    pneus: '12" Carga Pesada',
+    protecaoIp: 'IP66',
+    cor: 'Preto / Amarelo Frota',
+    garantia: '24 meses',
+    custo: 8900.00,
     preco: 13290.00,
     estoque: 4,
     status: 'Promocao',
-    descricao: 'Projetada para entregas rápidas e uso comercial intenso, com suporte traseiro reforçado para baú de até 120 litros.',
-    imagem: 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=700&q=80'
+    imagem: 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=800&q=80'
   }
 ];
 
-/* ============================================================================
- * CONFIGURAÇÃO DE ENDPOINT DA API ONLINE (COMPARTILHADA ENTRE AS PÁGINAS)
- * ============================================================================ */
+const PEDIDOS_INICIAIS = [
+  {
+    id: 'PED-9041',
+    cliente: 'Henrique Vasconcelos',
+    documento: '084.***.***-12',
+    modelo: 'VoltScoot X1 Pro Dual',
+    pagamento: 'Financiamento 24x',
+    valorTotal: 12490.00,
+    status: 'Aprovado',
+    data: '16/11/2026'
+  },
+  {
+    id: 'PED-9042',
+    cliente: 'Logística Express Ltda',
+    documento: '14.892.***/0001-90',
+    modelo: 'VoltScoot Cargo Fleet 2500W (2x)',
+    pagamento: 'PIX Corporativo (-5%)',
+    valorTotal: 25251.00,
+    status: 'Pendente',
+    data: '16/11/2026'
+  }
+];
+
 function obterUrlApiAtiva() {
   const inputPagina = document.getElementById('apiUrlInput');
   if (inputPagina && inputPagina.value.trim()) {
@@ -135,61 +206,50 @@ function definirUrlApiAtiva(novaUrl) {
   localStorage.setItem(STORAGE_KEY_API_URL, limpa);
   const inputPagina = document.getElementById('apiUrlInput');
   if (inputPagina) inputPagina.value = limpa;
-  atualizarIndicadorApiTopo();
+  atualizarStatusTopo();
 }
 
-function atualizarIndicadorApiTopo() {
+function atualizarStatusTopo() {
   const url = obterUrlApiAtiva();
-  const pillText = document.getElementById('apiTopStatusText');
-  if (!pillText) return;
-
-  if (url.includes('crudcrud.com')) {
-    pillText.textContent = 'API Online: CrudCrud.com';
-  } else if (url.includes('jsonplaceholder')) {
-    pillText.textContent = 'API Online: Cloud REST';
-  } else if (url.includes('localhost')) {
-    pillText.textContent = 'API: Servidor Local';
-  } else {
-    pillText.textContent = 'API Online Customizada';
+  const el = document.getElementById('apiTopStatusText');
+  if (el) {
+    if (url.includes('crudcrud.com')) el.textContent = 'CRUDCRUD CLOUD';
+    else if (url.includes('jsonplaceholder')) el.textContent = 'ONLINE REST API';
+    else if (url.includes('localhost')) el.textContent = 'LOCAL NODE API';
+    else el.textContent = 'CUSTOM REST API';
   }
+  atualizarBadgeCarrinho();
 }
 
 function obterIdItem(item) {
   return String(item._id || item.id);
 }
 
-/* ============================================================================
- * INICIALIZAÇÃO AUTOMÁTICA CONFORME A PÁGINA ABERTA
- * ============================================================================ */
 window.addEventListener('DOMContentLoaded', async () => {
-  atualizarIndicadorApiTopo();
-
+  atualizarStatusTopo();
   const inputApi = document.getElementById('apiUrlInput');
-  if (inputApi) {
-    inputApi.value = obterUrlApiAtiva();
-  }
+  if (inputApi) inputApi.value = obterUrlApiAtiva();
 
-  // Carrega a frota com GET em qualquer página
   await carregarFrotaInicialGET();
 
-  // Inicializações específicas por página
-  if (document.getElementById('calcKmDia')) {
-    calcularEconomiaScooter();
+  if (document.getElementById('finValorScooter')) {
+    calcularSimulacaoFinanciamento();
   }
-
   if (document.getElementById('crudForm')) {
     configurarPreviewAoVivoCadastro();
     verificarParametroIdUrlCadastro();
   }
-
+  if (document.getElementById('tabelaPedidosBody')) {
+    renderizarTabelaPedidos();
+  }
   if (document.getElementById('httpHistoryList')) {
     renderizarHistoricoSalvo();
   }
 });
 
-/* ============================================================================
- * 1. MÉTODO GET (LISTAR TODA A FROTA E BUSCAR SCOOTER POR ID)
- * ============================================================================ */
+/* ==========================================================================
+   OPERAÇÕES CRUD (GET, POST, PUT, PATCH, DELETE)
+   ========================================================================== */
 async function carregarFrotaInicialGET() {
   const url = obterUrlApiAtiva();
   try {
@@ -199,30 +259,25 @@ async function carregarFrotaInicialGET() {
       atualizarComponentesDaPagina(frotaCache);
     }
   } catch (erro) {
-    mostrarToast(`Erro no GET: ${erro.message}`, '#ef4444');
+    mostrarToast(`Falha GET: ${erro.message}`, '#ef4444');
   }
 }
 
 async function inspecionarScooterGETPorId(id) {
   if (!id) return;
   const url = `${obterUrlApiAtiva()}/${id}`;
-
   try {
     const res = await realizarRequisicaoHTTP('GET', url);
     if (res.ok && res.data) {
       abrirModalFichaTecnica(res.data, url);
-      mostrarToast(`GET /${id}: Ficha técnica recebida da API Online!`, '#3b82f6');
     } else {
-      mostrarToast(`Scooter #${id} não encontrada (404).`, '#ef4444');
+      mostrarToast(`Registro #${id} não localizado (404)`, '#ef4444');
     }
   } catch (erro) {
-    mostrarToast(`Erro no GET /:id: ${erro.message}`, '#ef4444');
+    mostrarToast(`Falha GET /:id: ${erro.message}`, '#ef4444');
   }
 }
 
-/* ============================================================================
- * 2. MÉTODO POST (CRIAR NOVA SCOOTER ELÉTRICA)
- * ============================================================================ */
 async function criarScooterPOST() {
   const dados = lerFormularioScooter();
   if (!dados) return;
@@ -231,23 +286,20 @@ async function criarScooterPOST() {
   try {
     const res = await realizarRequisicaoHTTP('POST', url, dados);
     if (res.ok) {
-      mostrarToast(`POST concluído! "${dados.modelo}" cadastrada na API Online.`, '#10b981');
-      exibirResultadoOperacaoForm('POST', `${url}`, res.status, dados, res.data);
+      mostrarToast(`POST 201: ${dados.modelo} registrada`, '#10b981');
+      exibirResultadoOperacaoForm('POST', url, res.status, dados, res.data);
       limparFormularioCadastro();
       await carregarFrotaInicialGET();
     }
   } catch (erro) {
-    mostrarToast(`Erro no POST: ${erro.message}`, '#ef4444');
+    mostrarToast(`Falha POST: ${erro.message}`, '#ef4444');
   }
 }
 
-/* ============================================================================
- * 3. MÉTODO PUT (ATUALIZAR FICHA COMPLETA DA SCOOTER)
- * ============================================================================ */
 async function atualizarScooterPUT() {
   const id = document.getElementById('itemId')?.value.trim();
   if (!id) {
-    mostrarToast('Selecione uma Scooter existente na lista acima para atualizar com PUT!', '#f59e0b');
+    mostrarToast('Selecione uma unidade existente no seletor superior para executar PUT', '#f59e0b');
     return;
   }
 
@@ -258,30 +310,27 @@ async function atualizarScooterPUT() {
   try {
     const res = await realizarRequisicaoHTTP('PUT', url, dadosCompletos);
     if (res.ok) {
-      mostrarToast(`PUT /${id}: Todos os dados da Scooter foram substituídos com sucesso!`, '#f59e0b');
+      mostrarToast(`PUT 200: Unidade #${id} substituída integralmente`, '#f59e0b');
       exibirResultadoOperacaoForm('PUT', url, res.status, dadosCompletos, res.data);
       await carregarFrotaInicialGET();
     }
   } catch (erro) {
-    mostrarToast(`Erro no PUT: ${erro.message}`, '#ef4444');
+    mostrarToast(`Falha PUT: ${erro.message}`, '#ef4444');
   }
 }
 
-/* ============================================================================
- * 4. MÉTODO PATCH (ATUALIZAÇÃO PARCIAL DE 1 OU ALGUNS CAMPOS)
- * ============================================================================ */
 async function executarPatchFormulario() {
   const id = document.getElementById('patchId')?.value.trim();
   const campo = document.getElementById('patchCampo')?.value;
   let valor = document.getElementById('patchValor')?.value.trim();
 
   if (!id || valor === '') {
-    mostrarToast('Selecione a Scooter e informe o novo valor para enviar o PATCH!', '#a855f7');
+    mostrarToast('Preencha o ID e o valor para enviar o PATCH', '#a855f7');
     return;
   }
 
-  if (campo === 'preco') valor = parseFloat(valor);
-  if (['estoque', 'potencia', 'autonomia', 'velocidadeMax'].includes(campo)) {
+  if (['preco', 'custo', 'tempoRecarga', 'amperagem'].includes(campo)) valor = parseFloat(valor);
+  if (['estoque', 'potencia', 'autonomia', 'velocidadeMax', 'torque', 'voltagem', 'peso', 'cargaMax'].includes(campo)) {
     valor = parseInt(valor, 10);
   }
 
@@ -295,15 +344,21 @@ async function enviarRequisicaoPATCH(id, payloadParcial) {
     const res = await realizarRequisicaoHTTP('PATCH', url, payloadParcial);
     if (res.ok) {
       const chaves = Object.keys(payloadParcial).join(', ');
-      mostrarToast(`PATCH /${id}: Campo (${chaves}) atualizado parcialmente na API Online!`, '#a855f7');
+      mostrarToast(`PATCH /${id} [${chaves}] atualizado`, '#a855f7');
       await carregarFrotaInicialGET();
     }
   } catch (erro) {
-    mostrarToast(`Erro no PATCH: ${erro.message}`, '#ef4444');
+    mostrarToast(`Falha PATCH: ${erro.message}`, '#ef4444');
   }
 }
 
-// Ações de PATCH em 1 clique (Desconto 10%, Desconto 20%, +1 Estoque, Mudar Status)
+async function patchInlineTabela(id, campo, valorBruto) {
+  let valor = valorBruto;
+  if (campo === 'preco' || campo === 'custo') valor = parseFloat(valorBruto);
+  if (campo === 'estoque' || campo === 'potencia' || campo === 'autonomia') valor = parseInt(valorBruto, 10);
+  await enviarRequisicaoPATCH(id, { [campo]: valor });
+}
+
 async function acaoRapidaPATCH(id, tipo) {
   const s = frotaCache.find((item) => obterIdItem(item) === String(id));
   if (!s) return;
@@ -311,43 +366,36 @@ async function acaoRapidaPATCH(id, tipo) {
   let payload = {};
   if (tipo === 'promo10') {
     payload = { preco: Number((Number(s.preco) * 0.9).toFixed(2)), status: 'Promocao' };
-  } else if (tipo === 'promo20') {
-    payload = { preco: Number((Number(s.preco) * 0.8).toFixed(2)), status: 'Promocao' };
   } else if (tipo === 'addEstoque') {
     payload = { estoque: Number(s.estoque || 0) + 1, status: 'Disponivel' };
   } else if (tipo === 'esgotar') {
     payload = { estoque: 0, status: 'Esgotada' };
   }
-
   await enviarRequisicaoPATCH(id, payload);
 }
 
-/* ============================================================================
- * 5. MÉTODO DELETE (EXCLUIR SCOOTER DA API ONLINE)
- * ============================================================================ */
 async function excluirScooterDELETE(id) {
   if (!id) return;
   const url = `${obterUrlApiAtiva()}/${id}`;
-
   try {
     const res = await realizarRequisicaoHTTP('DELETE', url);
     if (res.ok) {
-      mostrarToast(`DELETE /${id}: Scooter removida da API Online!`, '#ef4444');
+      mostrarToast(`DELETE /${id}: Unidade removida`, '#ef4444');
       await carregarFrotaInicialGET();
     }
   } catch (erro) {
-    mostrarToast(`Erro no DELETE: ${erro.message}`, '#ef4444');
+    mostrarToast(`Falha DELETE: ${erro.message}`, '#ef4444');
   }
 }
 
-/* ============================================================================
- * MOTOR DE REQUISIÇÕES HTTP (API ONLINE CLOUD + CRUDCRUD.COM + LOCAL)
- * ============================================================================ */
+/* ==========================================================================
+   MOTOR DE REDE HTTP (API ONLINE + CRUDCRUD + LOCAL)
+   ========================================================================== */
 async function realizarRequisicaoHTTP(metodo, url, bodyObj = null) {
   const inicio = performance.now();
 
   if (url.includes('COLE_SEU_TOKEN_AQUI')) {
-    throw new Error('Substitua COLE_SEU_TOKEN_AQUI pela sua chave gerada no site crudcrud.com!');
+    throw new Error('Informe seu endpoint válido do crudcrud.com');
   }
 
   let bodyLimpo = bodyObj;
@@ -358,12 +406,10 @@ async function realizarRequisicaoHTTP(metodo, url, bodyObj = null) {
     bodyLimpo = copia;
   }
 
-  // Modo 1: API Online Pública Padrão (JSONPlaceholder Cloud + Persistência de Frota)
   if (url.includes('jsonplaceholder.typicode.com')) {
     return await executarChamadaCloudPublica(metodo, url, bodyLimpo, inicio);
   }
 
-  // Modo 2: CrudCrud.com ou Servidor REST Online/Local
   const opcoes = { method: metodo, headers: {} };
   if (bodyLimpo) {
     opcoes.headers['Content-Type'] = 'application/json';
@@ -377,9 +423,9 @@ async function realizarRequisicaoHTTP(metodo, url, bodyObj = null) {
     let dados = null;
 
     if (texto) {
-      try { dados = JSON.parse(texto); } catch { dados = { mensagem: texto }; }
+      try { dados = JSON.parse(texto); } catch { dados = { raw: texto }; }
     } else {
-      dados = { status: response.status, metodo, mensagem: `Operação ${metodo} concluída com sucesso (Empty Body)` };
+      dados = { status: response.status, method: metodo, ok: true };
     }
 
     salvarERegistrarLogHTTP(metodo, url, response.status, duracao, bodyLimpo, dados);
@@ -446,18 +492,14 @@ async function fallbackPatchCrudCrud(urlItem, camposParciais, inicio) {
   });
 
   const duracao = Math.round(performance.now() - inicio);
-  const logData = {
-    metodo: 'PATCH',
-    camposModificados: camposParciais,
-    scooterAtualizada: mesclado
-  };
+  const logData = { method: 'PATCH', updatedFields: camposParciais, record: mesclado };
   salvarERegistrarLogHTTP('PATCH', urlItem, resPut.status, duracao, camposParciais, logData);
   return { ok: resPut.ok, status: resPut.status, data: logData };
 }
 
-/* ============================================================================
- * BANCO DE DADOS SINCRONIZADO DE SCOOTERS ELÉTRICAS
- * ============================================================================ */
+/* ==========================================================================
+   PERSISTÊNCIA & REPOSITÓRIO DE FROTA
+   ========================================================================== */
 function obterFrotaSalva() {
   const salvo = localStorage.getItem(STORAGE_KEY_SCOOTERS);
   if (!salvo) {
@@ -477,12 +519,10 @@ function operarBancoLocalScooters(metodo, url, body) {
   const ultimo = partes[partes.length - 1];
   const ehRaiz = ultimo === 'posts' || ultimo === 'scooters' || ultimo === '';
 
-  if (metodo === 'GET' && ehRaiz) {
-    return { ok: true, status: 200, data: db };
-  }
+  if (metodo === 'GET' && ehRaiz) return { ok: true, status: 200, data: db };
   if (metodo === 'GET' && !ehRaiz) {
     const item = db.find((s) => obterIdItem(s) === String(ultimo));
-    if (!item) return { ok: false, status: 404, data: { erro: 'Scooter não encontrada' } };
+    if (!item) return { ok: false, status: 404, data: { error: 'Not Found' } };
     return { ok: true, status: 200, data: item };
   }
   if (metodo === 'POST') {
@@ -493,32 +533,31 @@ function operarBancoLocalScooters(metodo, url, body) {
   }
   if (metodo === 'PUT' && !ehRaiz) {
     const idx = db.findIndex((s) => obterIdItem(s) === String(ultimo));
-    if (idx === -1) return { ok: false, status: 404, data: { erro: 'Scooter não encontrada' } };
+    if (idx === -1) return { ok: false, status: 404, data: { error: 'Not Found' } };
     db[idx] = { _id: String(ultimo), ...body };
     salvarFrota(db);
     return { ok: true, status: 200, data: db[idx] };
   }
   if (metodo === 'PATCH' && !ehRaiz) {
     const idx = db.findIndex((s) => obterIdItem(s) === String(ultimo));
-    if (idx === -1) return { ok: false, status: 404, data: { erro: 'Scooter não encontrada' } };
+    if (idx === -1) return { ok: false, status: 404, data: { error: 'Not Found' } };
     db[idx] = { ...db[idx], ...body };
     salvarFrota(db);
     return { ok: true, status: 200, data: db[idx] };
   }
   if (metodo === 'DELETE' && !ehRaiz) {
     const idx = db.findIndex((s) => obterIdItem(s) === String(ultimo));
-    if (idx === -1) return { ok: false, status: 404, data: { erro: 'Scooter não encontrada' } };
+    if (idx === -1) return { ok: false, status: 404, data: { error: 'Not Found' } };
     const removida = db.splice(idx, 1)[0];
     salvarFrota(db);
-    return { ok: true, status: 200, data: { mensagem: 'Scooter excluída', removida } };
+    return { ok: true, status: 200, data: { deleted: true, id: ultimo, record: removida } };
   }
-  return { ok: false, status: 400, data: { erro: 'Requisição inválida' } };
+  return { ok: false, status: 400, data: { error: 'Bad Request' } };
 }
 
 async function restaurarFrotaPadrao() {
   localStorage.setItem(STORAGE_KEY_SCOOTERS, JSON.stringify(SCOOTERS_INICIAIS));
   const url = obterUrlApiAtiva();
-
   if (url.includes('crudcrud.com')) {
     for (const s of SCOOTERS_INICIAIS) {
       const { _id, ...semId } = s;
@@ -526,40 +565,42 @@ async function restaurarFrotaPadrao() {
     }
   }
   await carregarFrotaInicialGET();
-  mostrarToast('Frota original de 6 Scooters Elétricas restaurada!', '#10b981');
+  mostrarToast('Base de dados sincronizada (6 modelos)', '#00e599');
 }
 
-/* ============================================================================
- * ATUALIZAÇÃO DINÂMICA DE CADA PÁGINA DO SITE
- * ============================================================================ */
+/* ==========================================================================
+   RENDERIZAÇÃO DE COMPONENTES POR PÁGINA
+   ========================================================================== */
 function atualizarComponentesDaPagina(scooters) {
-  // 1. Indicadores na Home (index.html)
-  if (document.getElementById('statTotalModelos')) {
-    document.getElementById('statTotalModelos').textContent = scooters.length;
-    const maxAut = scooters.reduce((m, s) => Math.max(m, Number(s.autonomia || 0)), 0);
-    document.getElementById('statMaxAutonomia').textContent = `${maxAut} km`;
-    const maxPot = scooters.reduce((m, s) => Math.max(m, Number(s.potencia || 0)), 0);
-    document.getElementById('statMaxPotencia').textContent = `${maxPot} W`;
-    const totEst = scooters.reduce((a, s) => a + Number(s.estoque || 0), 0);
-    document.getElementById('statTotalEstoque').textContent = `${totEst} un.`;
+  // KPIs Financeiros e de Engenharia
+  const elModelos = document.getElementById('statTotalModelos');
+  if (elModelos) {
+    elModelos.textContent = scooters.length;
+    const totalUnidades = scooters.reduce((a, s) => a + Number(s.estoque || 0), 0);
+    const valorPatrimonio = scooters.reduce((a, s) => a + Number(s.preco || 0) * Number(s.estoque || 0), 0);
+    const lucroPotencial = scooters.reduce((a, s) => a + (Number(s.preco || 0) - Number(s.custo || Number(s.preco) * 0.68)) * Number(s.estoque || 0), 0);
+
+    if (document.getElementById('statTotalEstoque')) {
+      document.getElementById('statTotalEstoque').textContent = `${totalUnidades} un.`;
+    }
+    if (document.getElementById('statValorEstoque')) {
+      document.getElementById('statValorEstoque').textContent = valorPatrimonio.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+    }
+    if (document.getElementById('statMargemTotal')) {
+      document.getElementById('statMargemTotal').textContent = lucroPotencial.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+    }
   }
 
-  // 2. Destaques na Home (index.html - mostra até 3 scooters)
   if (document.getElementById('homeDestaquesGrid')) {
     renderizarGridScooters(scooters.slice(0, 3), 'homeDestaquesGrid');
   }
-
-  // 3. Catálogo Completo com Filtros (catalogo.html)
   if (document.getElementById('catalogoScootersGrid')) {
     aplicarFiltrosCatalogo();
+    renderizarComparador();
   }
-
-  // 4. Seletor de Scooters na Página de Cadastro/Edição (cadastro.html)
   if (document.getElementById('seletorScooterPut')) {
     popularSeletorEdicaoPUT(scooters);
   }
-
-  // 5. Página de Ajustes Rápidos PATCH e DELETE (manutencao-patch.html)
   if (document.getElementById('tabelaManutencaoBody')) {
     renderizarPaginaManutencao(scooters);
   }
@@ -567,59 +608,86 @@ function atualizarComponentesDaPagina(scooters) {
 
 function criarCardScooterHTML(s) {
   const id = obterIdItem(s);
-  const precoFmt = Number(s.preco || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const precoNum = Number(s.preco || 0);
+  const precoFmt = precoNum.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+  const parcelaFmt = (precoNum / 12).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
   const statusLimpo = (s.status || 'Disponivel').replace(/\s+/g, '');
-  const imgPadrao = 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=700&q=80';
+  const imgPadrao = 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=800&q=80';
+
+  const pctPotencia = Math.min(100, Math.round((Number(s.potencia || 1000) / 5000) * 100));
+  const pctAutonomia = Math.min(100, Math.round((Number(s.autonomia || 50) / 120) * 100));
+  const noComparador = comparadorIds.includes(id);
 
   return `
-    <article class="scooter-card">
-      <div class="scooter-img-wrap">
+    <article class="unit-card">
+      <div class="unit-media">
         <img src="${escaparHTML(s.imagem || imgPadrao)}" alt="${escaparHTML(s.modelo)}" loading="lazy" />
-        <div class="scooter-top-badges">
-          <span class="scooter-id-tag">ID #${id}</span>
-          <span class="status-pill status-${statusLimpo}">${escaparHTML(s.status || 'Disponivel')}</span>
+        <div class="unit-badges-top">
+          <span class="sku-tag">${escaparHTML(s.sku || `ID-${id}`)}</span>
+          <span class="badge-status st-${statusLimpo}">${escaparHTML(s.status || 'Disponivel')}</span>
         </div>
       </div>
 
-      <div class="scooter-body">
-        <div>
-          <div class="scooter-brand">${escaparHTML(s.marca || 'VoltScoot')}</div>
-          <h3 class="scooter-title">${escaparHTML(s.modelo || 'Scooter Elétrica')}</h3>
+      <div class="unit-content">
+        <div class="unit-meta-line">
+          <span>${escaparHTML(s.marca || 'VoltScoot')}</span>
+          <span>${escaparHTML(s.categoria || 'Urbana')} • ${escaparHTML(s.protecaoIp || 'IP65')}</span>
+        </div>
+        <h3 class="unit-name">${escaparHTML(s.modelo)}</h3>
+
+        <div class="unit-telemetry">
+          <div class="tel-cell">
+            <span>Motor</span>
+            <strong>${s.potencia || 1000}W</strong>
+          </div>
+          <div class="tel-cell">
+            <span>Autonomia</span>
+            <strong>${s.autonomia || 50}km</strong>
+          </div>
+          <div class="tel-cell">
+            <span>Vel. Máx</span>
+            <strong>${s.velocidadeMax || 45}km/h</strong>
+          </div>
+          <div class="tel-cell">
+            <span>Bateria</span>
+            <strong>${s.voltagem || 60}V ${s.amperagem || 25}Ah</strong>
+          </div>
         </div>
 
-        <div class="scooter-specs">
-          <div class="spec-item">
-            <span class="spec-label">Potência</span>
-            <span class="spec-val">${s.potencia || 1000}W</span>
+        <div class="unit-bars">
+          <div class="bar-row">
+            <span class="bar-label">Potência</span>
+            <div class="bar-track"><div class="bar-fill" style="width:${pctPotencia}%"></div></div>
           </div>
-          <div class="spec-item">
-            <span class="spec-label">Autonomia</span>
-            <span class="spec-val">${s.autonomia || 50} km</span>
-          </div>
-          <div class="spec-item">
-            <span class="spec-label">Vel. Máx</span>
-            <span class="spec-val">${s.velocidadeMax || 45} km/h</span>
+          <div class="bar-row">
+            <span class="bar-label">Autonomia</span>
+            <div class="bar-track"><div class="bar-fill" style="width:${pctAutonomia}%"></div></div>
           </div>
         </div>
 
-        <div class="scooter-price-row">
-          <span class="scooter-price">${precoFmt}</span>
-          <span class="scooter-stock">${s.estoque ?? 0} em estoque</span>
+        <div class="unit-pricing">
+          <div>
+            <div class="price-main">${precoFmt}</div>
+            <div class="price-installments">12x de ${parcelaFmt} s/ juros</div>
+          </div>
+          <div style="text-align:right;">
+            <span style="font-size:0.72rem; color:var(--text-secondary);">${s.estoque ?? 0} un.</span>
+            ${document.getElementById('comparadorPanel') ? `
+              <div>
+                <button type="button" class="btn btn-outline btn-xs" onclick="alternarComparador('${id}')">
+                  ${noComparador ? '✓ Comparando' : '+ Comparar'}
+                </button>
+              </div>
+            ` : ''}
+          </div>
         </div>
 
-        <div class="scooter-actions">
-          <button class="action-btn badge-get" onclick="inspecionarScooterGETPorId('${id}')" title="Ficha Técnica via GET /:id">
-            GET
-          </button>
-          <a class="action-btn badge-put" href="cadastro.html?id=${encodeURIComponent(id)}" title="Editar Ficha Completa via PUT">
-            PUT
-          </a>
-          <button class="action-btn badge-patch" onclick="acaoRapidaPATCH('${id}', 'promo10')" title="Aplicar -10% no preço via PATCH">
-            PATCH
-          </button>
-          <button class="action-btn badge-delete" onclick="excluirScooterDELETE('${id}')" title="Excluir via DELETE">
-            DEL
-          </button>
+        <div class="unit-footer-actions">
+          <button class="btn btn-brand btn-xs" onclick="adicionarAoCarrinho('${id}')">Comprar</button>
+          <button class="btn btn-dark btn-xs m-get" onclick="inspecionarScooterGETPorId('${id}')">GET</button>
+          <a class="btn btn-dark btn-xs m-put" href="cadastro.html?id=${encodeURIComponent(id)}">PUT</a>
+          <button class="btn btn-dark btn-xs m-patch" onclick="acaoRapidaPATCH('${id}', 'promo10')">PATCH</button>
+          <button class="btn btn-dark btn-xs m-delete" onclick="excluirScooterDELETE('${id}')">DEL</button>
         </div>
       </div>
     </article>
@@ -629,53 +697,287 @@ function criarCardScooterHTML(s) {
 function renderizarGridScooters(lista, containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
-
   if (!lista.length) {
-    container.innerHTML = `<div class="card" style="grid-column:1/-1; text-align:center; color:#94a3b8;">Nenhuma Scooter encontrada com estes filtros.</div>`;
+    container.innerHTML = `<div class="panel" style="grid-column:1/-1; text-align:center; color:var(--text-muted);">Nenhum modelo corresponde aos critérios selecionados.</div>`;
     return;
   }
   container.innerHTML = lista.map(criarCardScooterHTML).join('');
 }
 
-/* ============================================================================
- * LÓGICA DA PÁGINA 1: HOME (CALCULADORA DE ECONOMIA)
- * ============================================================================ */
-function calcularEconomiaScooter() {
-  const kmDia = Number(document.getElementById('calcKmDia')?.value || 30);
-  const precoGasolina = Number(document.getElementById('calcPrecoGas')?.value || 6.10);
-
-  const labelKm = document.getElementById('calcKmValor');
-  if (labelKm) labelKm.textContent = `${kmDia} km/dia`;
-
-  const kmMes = kmDia * 22; // 22 dias úteis
-  // Moto/Carro urbano médio ~ 14 km/L vs Scooter Elétrica ~ R$ 0,02 por km de energia
-  const gastoCombustivelMes = (kmMes / 14) * precoGasolina;
-  const gastoEnergiaScooterMes = kmMes * 0.025;
-  const economiaMensal = Math.max(0, gastoCombustivelMes - gastoEnergiaScooterMes);
-  const economiaAnual = economiaMensal * 12;
-
-  const elMes = document.getElementById('resEconomiaMes');
-  const elAno = document.getElementById('resEconomiaAno');
-  if (elMes) elMes.textContent = economiaMensal.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-  if (elAno) elAno.textContent = economiaAnual.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+/* ==========================================================================
+   COMPARADOR TÉCNICO LADO A LADO (CATALOGO.HTML)
+   ========================================================================== */
+function alternarComparador(id) {
+  const idx = comparadorIds.indexOf(String(id));
+  if (idx >= 0) {
+    comparadorIds.splice(idx, 1);
+  } else {
+    if (comparadorIds.length >= 3) {
+      mostrarToast('Limite de 3 modelos no comparador simultâneo', '#f59e0b');
+      return;
+    }
+    comparadorIds.push(String(id));
+  }
+  aplicarFiltrosCatalogo();
+  renderizarComparador();
 }
 
-/* ============================================================================
- * LÓGICA DA PÁGINA 2: CATÁLOGO, FILTROS E MODAL (GET /:ID)
- * ============================================================================ */
+function renderizarComparador() {
+  const panel = document.getElementById('comparadorPanel');
+  const body = document.getElementById('comparadorBody');
+  if (!panel || !body) return;
+
+  if (!comparadorIds.length) {
+    panel.style.display = 'none';
+    return;
+  }
+  panel.style.display = 'block';
+
+  const selecionadas = comparadorIds
+    .map((id) => frotaCache.find((s) => obterIdItem(s) === id))
+    .filter(Boolean);
+
+  body.innerHTML = `
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Especificação</th>
+            ${selecionadas.map((s) => `<th>${escaparHTML(s.modelo)} <button class="btn btn-outline btn-xs" onclick="alternarComparador('${obterIdItem(s)}')">✕</button></th>`).join('')}
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>SKU / Marca</td>${selecionadas.map((s) => `<td>${escaparHTML(s.sku || '-')} • ${escaparHTML(s.marca)}</td>`).join('')}</tr>
+          <tr><td>Potência / Torque</td>${selecionadas.map((s) => `<td><strong>${s.potencia}W</strong> (${s.torque || 110} Nm)</td>`).join('')}</tr>
+          <tr><td>Bateria</td>${selecionadas.map((s) => `<td>${s.voltagem || 60}V ${s.amperagem || 25}Ah (${s.tempoRecarga || 4.5}h)</td>`).join('')}</tr>
+          <tr><td>Autonomia / Vel. Máx</td>${selecionadas.map((s) => `<td>${s.autonomia} km • ${s.velocidadeMax} km/h</td>`).join('')}</tr>
+          <tr><td>Peso / Carga Máxima</td>${selecionadas.map((s) => `<td>${s.peso || 60} kg / Suporta ${s.cargaMax || 160} kg</td>`).join('')}</tr>
+          <tr><td>Freios & Pneus</td>${selecionadas.map((s) => `<td>${escaparHTML(s.freios || 'Disco')} • ${escaparHTML(s.pneus || '12"')}</td>`).join('')}</tr>
+          <tr><td>Preço à Vista</td>${selecionadas.map((s) => `<td style="color:var(--brand); font-weight:800;">${Number(s.preco).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>`).join('')}</tr>
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+/* ==========================================================================
+   SIMULADOR DE FINANCIAMENTO & CARRINHO DE COMPRAS / PEDIDOS (POST / PATCH / DELETE)
+   ========================================================================== */
+function calcularSimulacaoFinanciamento() {
+  const valorBem = Number(document.getElementById('finValorScooter')?.value || 12490);
+  const entrada = Number(document.getElementById('finEntrada')?.value || 3000);
+  const parcelas = Number(document.getElementById('finParcelas')?.value || 24);
+
+  const saldo = Math.max(0, valorBem - entrada);
+  const taxaMensal = 0.0149; // 1.49% a.m.
+  const valorParcela = saldo > 0
+    ? (saldo * (taxaMensal * Math.pow(1 + taxaMensal, parcelas))) / (Math.pow(1 + taxaMensal, parcelas) - 1)
+    : 0;
+  const valorPix = valorBem * 0.95;
+
+  const elParcela = document.getElementById('resValorParcela');
+  const elPix = document.getElementById('resValorPix');
+  if (elParcela) elParcela.textContent = `${parcelas}x de ${valorParcela.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`;
+  if (elPix) elPix.textContent = valorPix.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
+
+function obterCarrinho() {
+  return JSON.parse(localStorage.getItem(STORAGE_KEY_CART) || '[]');
+}
+
+function atualizarBadgeCarrinho() {
+  const cart = obterCarrinho();
+  const totalQtd = cart.reduce((a, i) => a + i.qtd, 0);
+  document.querySelectorAll('.cart-count').forEach((el) => (el.textContent = totalQtd));
+}
+
+function adicionarAoCarrinho(id) {
+  const s = frotaCache.find((item) => obterIdItem(item) === String(id));
+  if (!s) return;
+
+  const cart = obterCarrinho();
+  const existente = cart.find((i) => i.id === String(id));
+  if (existente) existente.qtd += 1;
+  else cart.push({ id: String(id), modelo: s.modelo, preco: Number(s.preco), qtd: 1 });
+
+  localStorage.setItem(STORAGE_KEY_CART, JSON.stringify(cart));
+  atualizarBadgeCarrinho();
+  abrirModalCarrinho();
+}
+
+function removerItemCarrinho(id) {
+  const cart = obterCarrinho().filter((i) => i.id !== String(id));
+  localStorage.setItem(STORAGE_KEY_CART, JSON.stringify(cart));
+  atualizarBadgeCarrinho();
+  abrirModalCarrinho();
+}
+
+function abrirModalCarrinho() {
+  let modal = document.getElementById('modalCarrinhoGlobal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'modalCarrinhoGlobal';
+    modal.className = 'modal-backdrop';
+    modal.onclick = (e) => { if (e.target === modal) modal.classList.add('hidden'); };
+    document.body.appendChild(modal);
+  }
+
+  const cart = obterCarrinho();
+  const total = cart.reduce((a, i) => a + i.preco * i.qtd, 0);
+
+  modal.innerHTML = `
+    <div class="modal-card">
+      <div class="panel-head">
+        <span class="panel-title">Pedido / Checkout Comercial</span>
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('modalCarrinhoGlobal').classList.add('hidden')">✕ Fechar</button>
+      </div>
+      ${!cart.length ? `<p style="color:var(--text-muted); padding:1.5rem 0;">Nenhuma scooter selecionada no pedido atual.</p>` : `
+        <div class="table-wrap" style="margin-bottom:1.1rem;">
+          <table class="data-table">
+            <thead><tr><th>Modelo</th><th>Qtd</th><th>Unitário</th><th>Subtotal</th><th></th></tr></thead>
+            <tbody>
+              ${cart.map((i) => `
+                <tr>
+                  <td><strong>${escaparHTML(i.modelo)}</strong></td>
+                  <td>${i.qtd}</td>
+                  <td>${i.preco.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                  <td>${(i.preco * i.qtd).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+                  <td style="text-align:right;"><button class="btn btn-outline btn-xs" onclick="removerItemCarrinho('${i.id}')">Remover</button></td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        </div>
+        <div class="grid-3" style="margin-bottom:1rem;">
+          <div class="field"><label>Cliente / Razão Social</label><input type="text" id="chkCliente" value="Cliente Comercial" /></div>
+          <div class="field"><label>CPF / CNPJ</label><input type="text" id="chkDoc" value="112.490.880-00" /></div>
+          <div class="field">
+            <label>Modalidade de Pagamento</label>
+            <select id="chkPag">
+              <option value="PIX (-5% Desconto)">PIX (-5% Desconto)</option>
+              <option value="Cartão 12x Sem Juros">Cartão 12x Sem Juros</option>
+              <option value="Financiamento CDC 24x">Financiamento CDC 24x</option>
+              <option value="Faturamento Frota B2B">Faturamento Frota B2B</option>
+            </select>
+          </div>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding-top:0.8rem; border-top:1px solid var(--border);">
+          <div>
+            <small style="color:var(--text-muted); display:block;">TOTAL DO PEDIDO</small>
+            <strong style="font-size:1.35rem; color:var(--brand);">${total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</strong>
+          </div>
+          <button class="btn btn-brand" onclick="finalizarPedidoPOST()">Emitir Pedido (POST)</button>
+        </div>
+      `}
+    </div>
+  `;
+  modal.classList.remove('hidden');
+}
+
+async function finalizarPedidoPOST() {
+  const cart = obterCarrinho();
+  if (!cart.length) return;
+
+  const cliente = document.getElementById('chkCliente')?.value.trim() || 'Cliente';
+  const documento = document.getElementById('chkDoc')?.value.trim() || '-';
+  const pagamento = document.getElementById('chkPag')?.value || 'PIX';
+  const valorTotal = cart.reduce((a, i) => a + i.preco * i.qtd, 0);
+  const resumoModelos = cart.map((i) => `${i.modelo} (${i.qtd}x)`).join(', ');
+
+  const novoPedido = {
+    id: 'PED-' + Math.floor(1000 + Math.random() * 9000),
+    cliente,
+    documento,
+    modelo: resumoModelos,
+    pagamento,
+    valorTotal,
+    status: 'Aprovado',
+    data: new Date().toLocaleDateString('pt-BR')
+  };
+
+  await realizarRequisicaoHTTP('POST', obterUrlApiAtiva(), novoPedido);
+
+  const pedidos = obterPedidosSalvos();
+  pedidos.unshift(novoPedido);
+  localStorage.setItem(STORAGE_KEY_PEDIDOS, JSON.stringify(pedidos));
+  localStorage.removeItem(STORAGE_KEY_CART);
+
+  atualizarBadgeCarrinho();
+  document.getElementById('modalCarrinhoGlobal')?.classList.add('hidden');
+  if (document.getElementById('tabelaPedidosBody')) renderizarTabelaPedidos();
+  mostrarToast(`Pedido ${novoPedido.id} registrado via POST`, '#00e599');
+}
+
+function obterPedidosSalvos() {
+  const salvo = localStorage.getItem(STORAGE_KEY_PEDIDOS);
+  if (!salvo) {
+    localStorage.setItem(STORAGE_KEY_PEDIDOS, JSON.stringify(PEDIDOS_INICIAIS));
+    return [...PEDIDOS_INICIAIS];
+  }
+  return JSON.parse(salvo);
+}
+
+function renderizarTabelaPedidos() {
+  const tbody = document.getElementById('tabelaPedidosBody');
+  if (!tbody) return;
+  const pedidos = obterPedidosSalvos();
+
+  tbody.innerHTML = pedidos.map((p) => `
+    <tr>
+      <td><span class="sku-tag">${escaparHTML(p.id)}</span></td>
+      <td><strong>${escaparHTML(p.cliente)}</strong><div style="font-size:0.7rem; color:var(--text-muted);">${escaparHTML(p.documento)}</div></td>
+      <td>${escaparHTML(p.modelo)}</td>
+      <td>${escaparHTML(p.pagamento)}</td>
+      <td><strong>${Number(p.valorTotal).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</strong></td>
+      <td><span class="badge-status st-${p.status}">${escaparHTML(p.status)}</span></td>
+      <td style="text-align:right;">
+        <button class="btn btn-dark btn-xs m-patch" onclick="alterarStatusPedidoPATCH('${p.id}', 'Confirmado')">PATCH Aprovar</button>
+        <button class="btn btn-dark btn-xs m-patch" onclick="alterarStatusPedidoPATCH('${p.id}', 'Cancelado')">PATCH Cancelar</button>
+        <button class="btn btn-dark btn-xs m-delete" onclick="excluirPedidoDELETE('${p.id}')">DELETE</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+async function alterarStatusPedidoPATCH(id, novoStatus) {
+  await realizarRequisicaoHTTP('PATCH', `${obterUrlApiAtiva()}/1`, { id, status: novoStatus });
+  const pedidos = obterPedidosSalvos();
+  const idx = pedidos.findIndex((p) => p.id === id);
+  if (idx >= 0) {
+    pedidos[idx].status = novoStatus;
+    localStorage.setItem(STORAGE_KEY_PEDIDOS, JSON.stringify(pedidos));
+    renderizarTabelaPedidos();
+    mostrarToast(`PATCH Pedido ${id} -> ${novoStatus}`, '#a855f7');
+  }
+}
+
+async function excluirPedidoDELETE(id) {
+  await realizarRequisicaoHTTP('DELETE', `${obterUrlApiAtiva()}/1`);
+  const pedidos = obterPedidosSalvos().filter((p) => p.id !== id);
+  localStorage.setItem(STORAGE_KEY_PEDIDOS, JSON.stringify(pedidos));
+  renderizarTabelaPedidos();
+  mostrarToast(`DELETE Pedido ${id} removido`, '#ef4444');
+}
+
+/* ==========================================================================
+   FILTROS AVANÇADOS E FICHA TÉCNICA (CATALOGO.HTML)
+   ========================================================================== */
 function aplicarFiltrosCatalogo() {
   const busca = (document.getElementById('filtroBusca')?.value || '').toLowerCase();
   const marca = document.getElementById('filtroMarca')?.value || 'TODAS';
+  const cat = document.getElementById('filtroCategoria')?.value || 'TODAS';
   const status = document.getElementById('filtroStatus')?.value || 'TODOS';
   const ordem = document.getElementById('filtroOrdem')?.value || 'padrao';
 
   let filtradas = frotaCache.filter((s) => {
     const bateTexto =
       (s.modelo || '').toLowerCase().includes(busca) ||
+      (s.sku || '').toLowerCase().includes(busca) ||
       (s.marca || '').toLowerCase().includes(busca);
     const bateMarca = marca === 'TODAS' || s.marca === marca;
+    const bateCat = cat === 'TODAS' || s.categoria === cat;
     const bateStatus = status === 'TODOS' || s.status === status;
-    return bateTexto && bateMarca && bateStatus;
+    return bateTexto && bateMarca && bateCat && bateStatus;
   });
 
   if (ordem === 'menorPreco') filtradas.sort((a, b) => Number(a.preco) - Number(b.preco));
@@ -683,7 +985,7 @@ function aplicarFiltrosCatalogo() {
   if (ordem === 'maiorAutonomia') filtradas.sort((a, b) => Number(b.autonomia) - Number(a.autonomia));
 
   const contador = document.getElementById('catalogoTotalCount');
-  if (contador) contador.textContent = `${filtradas.length} scooters encontradas`;
+  if (contador) contador.textContent = `${filtradas.length} unidades`;
 
   renderizarGridScooters(filtradas, 'catalogoScootersGrid');
 }
@@ -697,35 +999,34 @@ function abrirModalFichaTecnica(s, urlRequisitada) {
   const precoFmt = Number(s.preco || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
   conteudo.innerHTML = `
-    <div class="card-header">
+    <div class="panel-head">
       <div>
-        <span class="badge badge-get">GET ${escaparHTML(urlRequisitada)}</span>
-        <h2 style="margin-top:0.5rem;">${escaparHTML(s.modelo)}</h2>
-        <p style="color:#34d399; font-size:0.85rem; font-weight:600;">${escaparHTML(s.marca || 'VoltScoot')} • ID #${id}</p>
+        <span class="method-tag m-get">GET ${escaparHTML(urlRequisitada)}</span>
+        <h2 style="margin-top:0.4rem;">${escaparHTML(s.modelo)}</h2>
       </div>
-      <button class="btn btn-ghost btn-sm" onclick="fecharModalFichaTecnica()">✕ Fechar</button>
+      <button class="btn btn-outline btn-sm" onclick="fecharModalFichaTecnica()">✕ Fechar</button>
     </div>
 
-    <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin:1rem 0;">
-      <img src="${escaparHTML(s.imagem || '')}" alt="${escaparHTML(s.modelo)}" style="width:100%; height:190px; object-fit:cover; border-radius:10px;" />
-      <div style="display:flex; flex-direction:column; gap:0.45rem; font-size:0.86rem;">
-        <div><strong>Preço:</strong> <span style="color:#34d399; font-weight:700;">${precoFmt}</span></div>
-        <div><strong>Potência do Motor:</strong> ${s.potencia || 0} W</div>
-        <div><strong>Autonomia:</strong> ${s.autonomia || 0} km</div>
-        <div><strong>Velocidade Máxima:</strong> ${s.velocidadeMax || 0} km/h</div>
-        <div><strong>Bateria:</strong> ${escaparHTML(s.bateria || '60V Lítio')}</div>
-        <div><strong>Tempo de Recarga:</strong> ${escaparHTML(s.tempoRecarga || '4.5 horas')}</div>
-        <div><strong>Cor:</strong> ${escaparHTML(s.cor || 'Preto Fosco')}</div>
-        <div><strong>Estoque:</strong> ${s.estoque ?? 0} unidades (${escaparHTML(s.status || 'Disponivel')})</div>
+    <div class="grid-2" style="margin-bottom:1.1rem;">
+      <img src="${escaparHTML(s.imagem || '')}" alt="${escaparHTML(s.modelo)}" style="width:100%; height:220px; object-fit:cover; border-radius:10px;" />
+      <div class="table-wrap">
+        <table class="data-table">
+          <tbody>
+            <tr><td>SKU / ID</td><td><strong>${escaparHTML(s.sku || id)}</strong> (#${id})</td></tr>
+            <tr><td>Motor / Torque</td><td>${s.potencia}W • ${s.torque || 120} Nm</td></tr>
+            <tr><td>Bateria</td><td>${s.voltagem || 60}V ${s.amperagem || 30}Ah (${s.tempoRecarga || 4.5}h)</td></tr>
+            <tr><td>Autonomia / Vel. Máx</td><td>${s.autonomia} km • ${s.velocidadeMax} km/h</td></tr>
+            <tr><td>Freios / Pneus</td><td>${escaparHTML(s.freios || 'Disco Hidráulico')} • ${escaparHTML(s.pneus || '12"')}</td></tr>
+            <tr><td>Peso / Carga Máx</td><td>${s.peso || 65} kg / ${s.cargaMax || 180} kg</td></tr>
+            <tr><td>Preço Comercial</td><td style="color:var(--brand); font-weight:800;">${precoFmt}</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
 
-    <p style="font-size:0.85rem; color:#cbd5e1; margin-bottom:1rem;">${escaparHTML(s.descricao || 'Scooter elétrica de alta eficiência.')}</p>
-
-    <div class="pane-title">📥 JSON Retornado pelo GET /:id</div>
-    <pre style="background:#070b14; padding:0.85rem; border-radius:8px; font-family:'JetBrains Mono',monospace; font-size:0.75rem; color:#38bdf8; overflow:auto;">${JSON.stringify(s, null, 2)}</pre>
+    <div class="net-pane-head">Payload JSON Retornado (GET /:id)</div>
+    <pre style="background:var(--bg-input); padding:0.8rem; border-radius:8px; border:1px solid var(--border); font-family:'JetBrains Mono',monospace; font-size:0.74rem; color:#38bdf8; overflow:auto;">${JSON.stringify(s, null, 2)}</pre>
   `;
-
   modal.classList.remove('hidden');
 }
 
@@ -733,20 +1034,15 @@ function fecharModalFichaTecnica() {
   document.getElementById('modalFichaTecnica')?.classList.add('hidden');
 }
 
-/* ============================================================================
- * LÓGICA DA PÁGINA 3: CADASTRO (POST) E EDIÇÃO COMPLETA (PUT)
- * ============================================================================ */
+/* ==========================================================================
+   CADASTRO & EDIÇÃO COMPLETA (POST & PUT - CADASTRO.HTML)
+   ========================================================================== */
 function popularSeletorEdicaoPUT(scooters) {
   const select = document.getElementById('seletorScooterPut');
   if (!select) return;
-
   const valorAtual = select.value;
-  select.innerHTML = `<option value="">➕ Modo Criação (POST — Cadastrar Nova Scooter)</option>` +
-    scooters.map((s) => {
-      const id = obterIdItem(s);
-      return `<option value="${id}">✏️ Editar ID #${id} — ${escaparHTML(s.modelo)} (Modo PUT)</option>`;
-    }).join('');
-
+  select.innerHTML = `<option value="">[POST] Cadastrar Novo Modelo na Frota</option>` +
+    scooters.map((s) => `<option value="${obterIdItem(s)}">[PUT] #${obterIdItem(s)} — ${escaparHTML(s.sku || '')} ${escaparHTML(s.modelo)}</option>`).join('');
   if (valorAtual) select.value = valorAtual;
 }
 
@@ -758,24 +1054,40 @@ function selecionarScooterParaPUT(id) {
   const s = frotaCache.find((item) => obterIdItem(item) === String(id));
   if (!s) return;
 
-  document.getElementById('itemId').value = obterIdItem(s);
-  document.getElementById('idDisplay').value = obterIdItem(s);
-  document.getElementById('modelo').value = s.modelo || '';
-  document.getElementById('marca').value = s.marca || 'VoltScoot';
-  document.getElementById('status').value = s.status || 'Disponivel';
-  document.getElementById('potencia').value = s.potencia ?? 2000;
-  document.getElementById('autonomia').value = s.autonomia ?? 65;
-  document.getElementById('velocidadeMax').value = s.velocidadeMax ?? 55;
-  document.getElementById('bateria').value = s.bateria || '60V 25Ah Lítio';
-  document.getElementById('tempoRecarga').value = s.tempoRecarga || '4.5 horas';
-  document.getElementById('cor').value = s.cor || 'Preto Fosco';
-  document.getElementById('preco').value = s.preco ?? 9990;
-  document.getElementById('estoque').value = s.estoque ?? 5;
-  document.getElementById('descricao').value = s.descricao || '';
-  if (s.imagem) document.getElementById('imagem').value = s.imagem;
+  const map = {
+    itemId: obterIdItem(s),
+    idDisplay: obterIdItem(s),
+    sku: s.sku || `VS-${id}`,
+    modelo: s.modelo || '',
+    marca: s.marca || 'VoltScoot',
+    categoria: s.categoria || 'Sport',
+    status: s.status || 'Disponivel',
+    potencia: s.potencia ?? 3000,
+    torque: s.torque ?? 140,
+    voltagem: s.voltagem ?? 60,
+    amperagem: s.amperagem ?? 30,
+    autonomia: s.autonomia ?? 75,
+    velocidadeMax: s.velocidadeMax ?? 70,
+    tempoRecarga: s.tempoRecarga ?? 4.5,
+    peso: s.peso ?? 65,
+    cargaMax: s.cargaMax ?? 180,
+    freios: s.freios || 'Disco Hidráulico CBS',
+    pneus: s.pneus || '12" Tubeless',
+    protecaoIp: s.protecaoIp || 'IP65',
+    cor: s.cor || 'Preto Fosco',
+    garantia: s.garantia || '24 meses',
+    custo: s.custo ?? 7900,
+    preco: s.preco ?? 12490,
+    estoque: s.estoque ?? 5,
+    imagem: s.imagem || ''
+  };
+
+  Object.entries(map).forEach(([campo, val]) => {
+    const el = document.getElementById(campo);
+    if (el) el.value = val;
+  });
 
   atualizarPreviewCardCadastro();
-  mostrarToast(`Scooter #${id} carregada para edição completa (PUT)!`, '#f59e0b');
 }
 
 function verificarParametroIdUrlCadastro() {
@@ -791,73 +1103,71 @@ function verificarParametroIdUrlCadastro() {
 }
 
 function configurarPreviewAoVivoCadastro() {
-  const campos = ['modelo', 'marca', 'status', 'potencia', 'autonomia', 'velocidadeMax', 'preco', 'estoque', 'imagem'];
-  campos.forEach((idCampo) => {
-    const el = document.getElementById(idCampo);
-    if (el) el.addEventListener('input', atualizarPreviewCardCadastro);
+  document.querySelectorAll('#crudForm input, #crudForm select').forEach((el) => {
+    el.addEventListener('input', atualizarPreviewCardCadastro);
   });
+}
+
+function lerFormularioScooter() {
+  const modelo = document.getElementById('modelo')?.value.trim();
+  const sku = document.getElementById('sku')?.value.trim() || 'VS-NEW';
+  const marca = document.getElementById('marca')?.value || 'VoltScoot';
+  const categoria = document.getElementById('categoria')?.value || 'Urbana';
+  const status = document.getElementById('status')?.value || 'Disponivel';
+  const potencia = parseInt(document.getElementById('potencia')?.value, 10);
+  const torque = parseInt(document.getElementById('torque')?.value, 10) || 110;
+  const voltagem = parseInt(document.getElementById('voltagem')?.value, 10) || 60;
+  const amperagem = parseFloat(document.getElementById('amperagem')?.value) || 25;
+  const autonomia = parseInt(document.getElementById('autonomia')?.value, 10);
+  const velocidadeMax = parseInt(document.getElementById('velocidadeMax')?.value, 10) || 55;
+  const tempoRecarga = parseFloat(document.getElementById('tempoRecarga')?.value) || 4.5;
+  const peso = parseFloat(document.getElementById('peso')?.value) || 62;
+  const cargaMax = parseInt(document.getElementById('cargaMax')?.value, 10) || 160;
+  const freios = document.getElementById('freios')?.value.trim() || 'Disco Hidráulico';
+  const pneus = document.getElementById('pneus')?.value.trim() || '12" Tubeless';
+  const protecaoIp = document.getElementById('protecaoIp')?.value || 'IP65';
+  const cor = document.getElementById('cor')?.value.trim() || 'Preto';
+  const garantia = document.getElementById('garantia')?.value || '24 meses';
+  const custo = parseFloat(document.getElementById('custo')?.value) || 6500;
+  const preco = parseFloat(document.getElementById('preco')?.value);
+  const estoque = parseInt(document.getElementById('estoque')?.value, 10);
+  const imagem = document.getElementById('imagem')?.value;
+
+  if (!modelo || isNaN(potencia) || isNaN(autonomia) || isNaN(preco) || isNaN(estoque)) {
+    mostrarToast('Verifique os campos obrigatórios de engenharia e preço', '#ef4444');
+    return null;
+  }
+
+  return {
+    sku, modelo, marca, categoria, status, potencia, torque, voltagem, amperagem,
+    autonomia, velocidadeMax, tempoRecarga, peso, cargaMax, freios, pneus,
+    protecaoIp, cor, garantia, custo, preco, estoque, imagem
+  };
 }
 
 function atualizarPreviewCardCadastro() {
   const container = document.getElementById('previewScooterBox');
   if (!container) return;
-
-  const dados = {
-    _id: document.getElementById('itemId')?.value || 'NOVO',
-    modelo: document.getElementById('modelo')?.value || 'Modelo da Sua Scooter',
-    marca: document.getElementById('marca')?.value || 'VoltScoot',
-    status: document.getElementById('status')?.value || 'Disponivel',
-    potencia: document.getElementById('potencia')?.value || 3000,
-    autonomia: document.getElementById('autonomia')?.value || 75,
-    velocidadeMax: document.getElementById('velocidadeMax')?.value || 70,
-    preco: document.getElementById('preco')?.value || 11990,
-    estoque: document.getElementById('estoque')?.value || 5,
-    imagem: document.getElementById('imagem')?.value
+  const d = lerFormularioScooter() || {
+    sku: 'VS-PRO',
+    modelo: 'VoltScoot Série X',
+    marca: 'VoltScoot',
+    categoria: 'Sport',
+    potencia: 3000,
+    autonomia: 80,
+    velocidadeMax: 70,
+    voltagem: 60,
+    amperagem: 30,
+    preco: 12490,
+    estoque: 5,
+    status: 'Disponivel'
   };
-
-  container.innerHTML = criarCardScooterHTML(dados);
-}
-
-function lerFormularioScooter() {
-  const modelo = document.getElementById('modelo')?.value.trim();
-  const marca = document.getElementById('marca')?.value;
-  const status = document.getElementById('status')?.value;
-  const potencia = parseInt(document.getElementById('potencia')?.value, 10);
-  const autonomia = parseInt(document.getElementById('autonomia')?.value, 10);
-  const velocidadeMax = parseInt(document.getElementById('velocidadeMax')?.value, 10);
-  const bateria = document.getElementById('bateria')?.value.trim() || '60V Lítio';
-  const tempoRecarga = document.getElementById('tempoRecarga')?.value.trim() || '4.5 horas';
-  const cor = document.getElementById('cor')?.value.trim() || 'Preto';
-  const preco = parseFloat(document.getElementById('preco')?.value);
-  const estoque = parseInt(document.getElementById('estoque')?.value, 10);
-  const descricao = document.getElementById('descricao')?.value.trim() || '';
-  const imagem = document.getElementById('imagem')?.value;
-
-  if (!modelo || isNaN(potencia) || isNaN(autonomia) || isNaN(preco) || isNaN(estoque)) {
-    mostrarToast('Preencha todos os campos obrigatórios (Modelo, Potência, Autonomia, Preço e Estoque)!', '#ef4444');
-    return null;
-  }
-
-  return {
-    modelo,
-    marca,
-    status,
-    potencia,
-    autonomia,
-    velocidadeMax: isNaN(velocidadeMax) ? 50 : velocidadeMax,
-    bateria,
-    tempoRecarga,
-    cor,
-    preco,
-    estoque,
-    descricao,
-    imagem
-  };
+  d._id = document.getElementById('itemId')?.value || 'NEW';
+  container.innerHTML = criarCardScooterHTML(d);
 }
 
 function limparFormularioCadastro() {
-  const form = document.getElementById('crudForm');
-  if (form) form.reset();
+  document.getElementById('crudForm')?.reset();
   if (document.getElementById('itemId')) document.getElementById('itemId').value = '';
   if (document.getElementById('idDisplay')) document.getElementById('idDisplay').value = '';
   if (document.getElementById('seletorScooterPut')) document.getElementById('seletorScooterPut').value = '';
@@ -867,24 +1177,24 @@ function limparFormularioCadastro() {
 function exibirResultadoOperacaoForm(metodo, url, status, enviado, recebido) {
   const box = document.getElementById('formResponseInspector');
   if (!box) return;
-  box.classList.remove('hidden');
+  box.style.display = 'block';
   document.getElementById('formLogMethod').textContent = metodo;
-  document.getElementById('formLogMethod').className = `badge badge-${metodo.toLowerCase()}`;
+  document.getElementById('formLogMethod').className = `method-tag m-${metodo.toLowerCase()}`;
   document.getElementById('formLogUrl').textContent = url;
   document.getElementById('formLogStatus').textContent = `${status} OK`;
   document.getElementById('formLogReq').textContent = JSON.stringify(enviado, null, 2);
   document.getElementById('formLogRes').textContent = JSON.stringify(recebido, null, 2);
 }
 
-/* ============================================================================
- * LÓGICA DA PÁGINA 4: MANUTENÇÃO PARCIAL (PATCH) E EXCLUSÃO (DELETE)
- * ============================================================================ */
+/* ==========================================================================
+   MANUTENÇÃO & TABELA INLINE (PATCH & DELETE - MANUTENCAO-PATCH.HTML)
+   ========================================================================== */
 function renderizarPaginaManutencao(scooters) {
   const selectPatch = document.getElementById('patchId');
   if (selectPatch && selectPatch.tagName === 'SELECT') {
     const atual = selectPatch.value;
     selectPatch.innerHTML = scooters
-      .map((s) => `<option value="${obterIdItem(s)}">#${obterIdItem(s)} — ${escaparHTML(s.modelo)} (R$ ${Number(s.preco).toFixed(2)})</option>`)
+      .map((s) => `<option value="${obterIdItem(s)}">#${obterIdItem(s)} — ${escaparHTML(s.sku || '')} ${escaparHTML(s.modelo)}</option>`)
       .join('');
     if (atual) selectPatch.value = atual;
   }
@@ -892,67 +1202,61 @@ function renderizarPaginaManutencao(scooters) {
   const tbody = document.getElementById('tabelaManutencaoBody');
   if (!tbody) return;
 
-  if (!scooters.length) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:2rem;">Nenhuma Scooter cadastrada.</td></tr>`;
-    return;
-  }
+  tbody.innerHTML = scooters.map((s) => {
+    const id = obterIdItem(s);
+    const margem = Number(s.preco) > 0
+      ? Math.round(((Number(s.preco) - Number(s.custo || Number(s.preco) * 0.68)) / Number(s.preco)) * 100)
+      : 30;
 
-  tbody.innerHTML = scooters
-    .map((s) => {
-      const id = obterIdItem(s);
-      const precoFmt = Number(s.preco || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-      const statusLimpo = (s.status || 'Disponivel').replace(/\s+/g, '');
-
-      return `
-        <tr>
-          <td><span class="scooter-id-tag">#${id}</span></td>
-          <td>
-            <strong>${escaparHTML(s.modelo)}</strong>
-            <div style="font-size:0.74rem; color:#94a3b8;">${escaparHTML(s.marca)}</div>
-          </td>
-          <td>${s.potencia}W • ${s.autonomia}km</td>
-          <td><strong style="color:#34d399;">${precoFmt}</strong></td>
-          <td>${s.estoque} un.</td>
-          <td><span class="status-pill status-${statusLimpo}">${escaparHTML(s.status)}</span></td>
-          <td class="text-right">
-            <div style="display:flex; justify-content:flex-end; gap:0.35rem; flex-wrap:wrap;">
-              <button class="action-btn badge-patch" onclick="acaoRapidaPATCH('${id}', 'promo10')" title="PATCH: -10% no Preço">
-                PATCH -10%
-              </button>
-              <button class="action-btn badge-patch" onclick="acaoRapidaPATCH('${id}', 'addEstoque')" title="PATCH: +1 Estoque">
-                PATCH +1 Un.
-              </button>
-              <button class="action-btn badge-patch" onclick="acaoRapidaPATCH('${id}', 'esgotar')" title="PATCH: Marcar Esgotada">
-                PATCH Esgotar
-              </button>
-              <button class="action-btn badge-delete" onclick="excluirScooterDELETE('${id}')" title="DELETE: Excluir Scooter">
-                DELETE
-              </button>
-            </div>
-          </td>
-        </tr>
-      `;
-    })
-    .join('');
+    return `
+      <tr>
+        <td><span class="sku-tag">${escaparHTML(s.sku || `#${id}`)}</span></td>
+        <td>
+          <strong>${escaparHTML(s.modelo)}</strong>
+          <div style="font-size:0.7rem; color:var(--text-muted);">${escaparHTML(s.marca)} • ${s.potencia}W • ${s.autonomia}km</div>
+        </td>
+        <td>
+          <input type="number" class="inline-input" value="${Number(s.custo || 7000)}"
+            onchange="patchInlineTabela('${id}', 'custo', this.value)" />
+        </td>
+        <td>
+          <input type="number" class="inline-input" value="${Number(s.preco)}"
+            onchange="patchInlineTabela('${id}', 'preco', this.value)" />
+        </td>
+        <td><span style="color:var(--brand); font-family:'JetBrains Mono',monospace; font-weight:700;">${margem}%</span></td>
+        <td>
+          <input type="number" class="inline-input" style="width:68px;" value="${Number(s.estoque)}"
+            onchange="patchInlineTabela('${id}', 'estoque', this.value)" />
+        </td>
+        <td>
+          <select class="inline-select" onchange="patchInlineTabela('${id}', 'status', this.value)">
+            <option value="Disponivel" ${s.status === 'Disponivel' ? 'selected' : ''}>Disponivel</option>
+            <option value="Promocao" ${s.status === 'Promocao' ? 'selected' : ''}>Promocao</option>
+            <option value="Lancamento" ${s.status === 'Lancamento' ? 'selected' : ''}>Lancamento</option>
+            <option value="Esgotada" ${s.status === 'Esgotada' ? 'selected' : ''}>Esgotada</option>
+          </select>
+        </td>
+        <td style="text-align:right;">
+          <button class="btn btn-dark btn-xs m-patch" onclick="acaoRapidaPATCH('${id}', 'promo10')">-10%</button>
+          <button class="btn btn-dark btn-xs m-patch" onclick="acaoRapidaPATCH('${id}', 'addEstoque')">+1</button>
+          <button class="btn btn-dark btn-xs m-delete" onclick="excluirScooterDELETE('${id}')">DEL</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
 }
 
-/* ============================================================================
- * LÓGICA DA PÁGINA 5: CONSOLE DA API ONLINE & HISTÓRICO DE LOGS HTTP
- * ============================================================================ */
+/* ==========================================================================
+   LOGS HTTP & CONFIGURAÇÃO DE API
+   ========================================================================== */
 function salvarERegistrarLogHTTP(metodo, url, status, duracaoMs, reqBody, resBody) {
   const novoLog = {
-    metodo,
-    url,
-    status,
-    duracaoMs,
-    reqBody,
-    resBody,
+    metodo, url, status, duracaoMs, reqBody, resBody,
     hora: new Date().toLocaleTimeString('pt-BR')
   };
-
-  const historico = JSON.parse(localStorage.getItem(STORAGE_KEY_HTTP_LOGS) || '[]');
+  const historico = JSON.parse(localStorage.getItem(STORAGE_KEY_LOGS) || '[]');
   historico.unshift(novoLog);
-  localStorage.setItem(STORAGE_KEY_HTTP_LOGS, JSON.stringify(historico.slice(0, 25)));
+  localStorage.setItem(STORAGE_KEY_LOGS, JSON.stringify(historico.slice(0, 30)));
 
   atualizarPainelConsoleNaTela(novoLog);
   renderizarHistoricoSalvo();
@@ -961,73 +1265,54 @@ function salvarERegistrarLogHTTP(metodo, url, status, duracaoMs, reqBody, resBod
 function atualizarPainelConsoleNaTela(log) {
   const badge = document.getElementById('logMethod');
   if (!badge) return;
-
-  badge.className = `badge badge-${log.metodo.toLowerCase()}`;
+  badge.className = `method-tag m-${log.metodo.toLowerCase()}`;
   badge.textContent = log.metodo;
   document.getElementById('logUrl').textContent = log.url;
-
-  const statusEl = document.getElementById('logStatus');
-  const isOk = log.status >= 200 && log.status < 300;
-  statusEl.className = `http-status ${isOk ? 'status-ok' : 'status-err'}`;
-  statusEl.textContent = `${log.status} ${isOk ? 'OK' : 'ERRO'}`;
-
+  document.getElementById('logStatus').textContent = `${log.status}`;
   document.getElementById('logTime').textContent = `${log.duracaoMs}ms`;
-  document.getElementById('logReqBody').textContent = log.reqBody
-    ? JSON.stringify(log.reqBody, null, 2)
-    : '// Sem corpo (Body vazio para este método)';
-  document.getElementById('logResBody').textContent = log.resBody
-    ? JSON.stringify(log.resBody, null, 2)
-    : '// Sem resposta JSON';
+  document.getElementById('logReqBody').textContent = log.reqBody ? JSON.stringify(log.reqBody, null, 2) : '// Sem payload';
+  document.getElementById('logResBody').textContent = log.resBody ? JSON.stringify(log.resBody, null, 2) : '// Sem conteúdo';
 }
 
 function renderizarHistoricoSalvo() {
   const listEl = document.getElementById('httpHistoryList');
   if (!listEl) return;
-
-  const historico = JSON.parse(localStorage.getItem(STORAGE_KEY_HTTP_LOGS) || '[]');
+  const historico = JSON.parse(localStorage.getItem(STORAGE_KEY_LOGS) || '[]');
   if (!historico.length) {
-    listEl.innerHTML = `<div style="color:#64748b; font-size:0.8rem;">Nenhuma requisição registrada ainda.</div>`;
+    listEl.innerHTML = `<div style="color:var(--text-muted); font-size:0.78rem;">Sem registros na sessão.</div>`;
     return;
   }
-
   atualizarPainelConsoleNaTela(historico[0]);
-
-  listEl.innerHTML = historico
-    .map((h) => {
-      const isOk = h.status >= 200 && h.status < 300;
-      return `
-        <div style="display:flex; align-items:center; gap:0.65rem; padding:0.45rem 0.7rem; background:#070b14; border:1px solid #1e293b; border-radius:6px; font-family:'JetBrains Mono',monospace; font-size:0.75rem;">
-          <span class="badge badge-${h.metodo.toLowerCase()}">${h.metodo}</span>
-          <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escaparHTML(h.url)}</span>
-          <span class="http-status ${isOk ? 'status-ok' : 'status-err'}">${h.status}</span>
-          <span style="color:#64748b;">${h.duracaoMs}ms • ${h.hora}</span>
-        </div>
-      `;
-    })
-    .join('');
+  listEl.innerHTML = historico.map((h) => `
+    <div style="display:flex; align-items:center; gap:0.65rem; padding:0.42rem 0.7rem; background:var(--bg-input); border:1px solid var(--border); border-radius:6px; font-family:'JetBrains Mono',monospace; font-size:0.74rem;">
+      <span class="method-tag m-${h.metodo.toLowerCase()}">${h.metodo}</span>
+      <span style="flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escaparHTML(h.url)}</span>
+      <span style="color:var(--brand);">${h.status}</span>
+      <span style="color:var(--text-muted);">${h.duracaoMs}ms • ${h.hora}</span>
+    </div>
+  `).join('');
 }
 
 function limparHistoricoLogs() {
-  localStorage.removeItem(STORAGE_KEY_HTTP_LOGS);
+  localStorage.removeItem(STORAGE_KEY_LOGS);
   renderizarHistoricoSalvo();
-  mostrarToast('Histórico de requisições HTTP limpo!', '#38bdf8');
 }
 
 function escolherPresetAPI(tipo) {
   if (tipo === 'online') {
     definirUrlApiAtiva('https://jsonplaceholder.typicode.com/posts');
-    mostrarToast('API Online Pública selecionada e ativa!', '#10b981');
     carregarFrotaInicialGET();
+    mostrarToast('Endpoint Online Cloud ativo', '#00e599');
   } else if (tipo === 'crudcrud') {
     const input = document.getElementById('apiUrlInput');
     if (input && !input.value.includes('crudcrud.com')) {
       input.value = 'https://crudcrud.com/api/COLE_SEU_TOKEN_AQUI/scooters';
     }
-    mostrarToast('Cole seu token do CrudCrud.com e clique em Salvar Endpoint!', '#f59e0b');
+    mostrarToast('Insira o token do CrudCrud.com e clique em Aplicar', '#f59e0b');
   } else if (tipo === 'local') {
     definirUrlApiAtiva('http://localhost:3000/api/scooters');
-    mostrarToast('Servidor Node.js Local selecionado!', '#3b82f6');
     carregarFrotaInicialGET();
+    mostrarToast('Endpoint Local Node ativo', '#3b82f6');
   }
 }
 
@@ -1035,14 +1320,11 @@ function salvarEndpointCustomizado() {
   const input = document.getElementById('apiUrlInput');
   if (!input || !input.value.trim()) return;
   definirUrlApiAtiva(input.value);
-  mostrarToast('Novo Endpoint salvo! Sincronizando frota com GET...', '#10b981');
   carregarFrotaInicialGET();
+  mostrarToast('Endpoint atualizado', '#00e599');
 }
 
-/* ============================================================================
- * UTILITÁRIOS GERAIS
- * ============================================================================ */
-function mostrarToast(mensagem, corBorda = '#10b981') {
+function mostrarToast(mensagem, corBorda = '#00e599') {
   let container = document.getElementById('toastContainer');
   if (!container) {
     container = document.createElement('div');
@@ -1055,8 +1337,7 @@ function mostrarToast(mensagem, corBorda = '#10b981') {
   toast.style.borderLeftColor = corBorda;
   toast.textContent = mensagem;
   container.appendChild(toast);
-
-  setTimeout(() => toast.remove(), 3800);
+  setTimeout(() => toast.remove(), 3500);
 }
 
 function escaparHTML(str) {

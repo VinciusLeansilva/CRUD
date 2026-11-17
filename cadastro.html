@@ -3,100 +3,77 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VoltScoot ⚡ Cadastrar (POST) e Editar Scooter (PUT)</title>
+  <title>VOLTSCOOT MOTORS | Engenharia & Cadastro (POST / PUT)</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- Barra de Navegação Multi-Páginas -->
   <header class="topbar">
     <div class="container topbar-inner">
       <a href="index.html" class="brand">
-        <div class="brand-logo">⚡</div>
+        <div class="brand-mark">VS</div>
         <div>
-          <span class="brand-title">VoltScoot <span class="brand-highlight">Elétricas</span></span>
-          <span class="brand-sub">Concessionária & Sistema CRUD Online</span>
+          <div class="brand-name">VOLT<span>SCOOT</span></div>
+          <span class="brand-tag">Electric Mobility Systems</span>
         </div>
       </a>
 
       <nav class="nav-menu">
-        <a href="index.html" class="nav-link">🏠 Início</a>
-        <a href="catalogo.html" class="nav-link">🛵 Catálogo <span class="badge badge-get">GET</span></a>
-        <a href="cadastro.html" class="nav-link active">➕ Cadastrar / Editar <span class="badge badge-post">POST</span> <span class="badge badge-put">PUT</span></a>
-        <a href="manutencao-patch.html" class="nav-link">⚡ Promoções & Estoque <span class="badge badge-patch">PATCH</span> <span class="badge badge-delete">DEL</span></a>
-        <a href="api-console.html" class="nav-link">🌐 API Online & Logs</a>
+        <a href="index.html" class="nav-link">Showroom</a>
+        <a href="catalogo.html" class="nav-link">Catálogo & Comparador</a>
+        <a href="cadastro.html" class="nav-link active">Engenharia & Cadastro</a>
+        <a href="manutencao-patch.html" class="nav-link">Precificação & Estoque</a>
+        <a href="api-console.html" class="nav-link">Pedidos & Rede API</a>
       </nav>
 
-      <div class="api-status-pill">
-        <span class="status-dot"></span>
-        <span id="apiTopStatusText">API Online: Cloud REST</span>
+      <div class="topbar-right">
+        <button class="cart-trigger" onclick="abrirModalCarrinho()">
+          Pedido <span class="cart-count">0</span>
+        </button>
+        <div class="api-pill">
+          <span class="dot-online"></span>
+          <span id="apiTopStatusText">ONLINE REST API</span>
+        </div>
       </div>
     </div>
   </header>
 
-  <!-- Cabeçalho da Página -->
-  <section class="page-header">
-    <div class="container page-header-inner">
+  <main class="container main-wrap">
+    <div class="toolbar-top">
       <div>
-        <div style="display:flex; gap:0.45rem;">
-          <span class="badge badge-post">MÉTODO POST (CRIAR)</span>
-          <span class="badge badge-put">MÉTODO PUT (SUBSTITUIR TUDO)</span>
+        <div style="display:flex; gap:0.4rem;">
+          <span class="method-tag m-post">POST /scooters</span>
+          <span class="method-tag m-put">PUT /scooters/:id</span>
         </div>
-        <h1 class="page-title" style="margin-top:0.4rem;">➕ Cadastrar ou Editar Scooter Elétrica</h1>
+        <h1 class="toolbar-title" style="margin-top:0.3rem;">Homologação & Ficha de Engenharia</h1>
       </div>
-      <a href="catalogo.html" class="btn btn-ghost">← Voltar ao Catálogo</a>
+      <div style="min-width:340px;">
+        <select id="seletorScooterPut" class="inline-select" style="width:100%; padding:0.55rem;" onchange="selecionarScooterParaPUT(this.value)"></select>
+      </div>
     </div>
-  </section>
 
-  <main class="container main-content">
-    <!-- Barra de Seleção de Modo: POST (Novo) vs PUT (Editar Existente) -->
-    <section class="card">
-      <div class="input-group">
-        <label for="seletorScooterPut">🔄 Escolha o Modo de Operação (Criar Nova com POST ou Carregar Scooter Existente para PUT):</label>
-        <select id="seletorScooterPut" onchange="selecionarScooterParaPUT(this.value)"></select>
-      </div>
-    </section>
-
-    <div class="form-grid-layout">
-      <!-- Formulário Técnico Completo -->
-      <section class="card">
-        <div class="card-header">
-          <h2>📝 Ficha Técnica Completa da Scooter</h2>
-          <div style="display:flex; gap:0.4rem;">
-            <span class="badge badge-post">POST</span>
-            <span class="badge badge-put">PUT</span>
-          </div>
-        </div>
-
+    <div class="split-erp">
+      <section class="panel">
         <form id="crudForm" onsubmit="event.preventDefault()">
           <input type="hidden" id="itemId" />
 
-          <div class="form-row two-cols">
-            <div class="input-group">
-              <label for="idDisplay">ID do Registro (Automático no POST):</label>
-              <input type="text" id="idDisplay" placeholder="Novo Registro (POST)" readonly class="readonly-input" />
-            </div>
-            <div class="input-group">
-              <label for="status">Status Comercial *</label>
-              <select id="status" required>
-                <option value="Disponivel">Disponível</option>
-                <option value="Promocao">Em Promoção</option>
-                <option value="Lancamento">Lançamento</option>
-                <option value="Esgotada">Esgotada</option>
-              </select>
-            </div>
+          <div class="panel-head">
+            <span class="panel-title">1. Identificação Comercial</span>
           </div>
-
-          <div class="form-row two-cols">
-            <div class="input-group">
-              <label for="modelo">Nome / Modelo da Scooter *</label>
-              <input type="text" id="modelo" placeholder="Ex: VoltScoot X1 Pro 3000W" required />
+          <div class="grid-4" style="margin-bottom:1.25rem;">
+            <div class="field">
+              <label for="idDisplay">ID Registro</label>
+              <input type="text" id="idDisplay" placeholder="AUTO (POST)" readonly />
             </div>
-            <div class="input-group">
-              <label for="marca">Marca / Fabricante *</label>
-              <select id="marca" required>
+            <div class="field">
+              <label for="sku">Código SKU *</label>
+              <input type="text" id="sku" value="VS-X2-4000" required />
+            </div>
+            <div class="field">
+              <label for="marca">Fabricante *</label>
+              <select id="marca">
                 <option value="VoltScoot">VoltScoot</option>
                 <option value="Segway Ninebot">Segway Ninebot</option>
                 <option value="Watts Mobilidade">Watts Mobilidade</option>
@@ -104,110 +81,179 @@
                 <option value="Xiaomi Mi Electric">Xiaomi Mi Electric</option>
               </select>
             </div>
-          </div>
-
-          <div class="form-row three-cols">
-            <div class="input-group">
-              <label for="potencia">Potência do Motor (W) *</label>
-              <input type="number" id="potencia" value="3000" min="100" step="50" required />
-            </div>
-            <div class="input-group">
-              <label for="autonomia">Autonomia (km) *</label>
-              <input type="number" id="autonomia" value="75" min="5" required />
-            </div>
-            <div class="input-group">
-              <label for="velocidadeMax">Velocidade Máx (km/h) *</label>
-              <input type="number" id="velocidadeMax" value="70" min="10" required />
-            </div>
-          </div>
-
-          <div class="form-row three-cols">
-            <div class="input-group">
-              <label for="bateria">Especificação da Bateria:</label>
-              <input type="text" id="bateria" value="60V 30Ah Lítio Removível" />
-            </div>
-            <div class="input-group">
-              <label for="tempoRecarga">Tempo de Recarga:</label>
-              <input type="text" id="tempoRecarga" value="4.5 horas" />
-            </div>
-            <div class="input-group">
-              <label for="cor">Cor Predominante:</label>
-              <input type="text" id="cor" value="Preto Fosco Neon" />
-            </div>
-          </div>
-
-          <div class="form-row two-cols">
-            <div class="input-group">
-              <label for="preco">Preço de Venda (R$) *</label>
-              <input type="number" id="preco" step="0.01" value="12490.00" required />
-            </div>
-            <div class="input-group">
-              <label for="estoque">Unidades em Estoque *</label>
-              <input type="number" id="estoque" value="6" min="0" required />
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="input-group">
-              <label for="imagem">Foto da Scooter Elétrica:</label>
-              <select id="imagem">
-                <option value="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=700&q=80">Scooter Urbana Preta Fosca (VoltScoot X1)</option>
-                <option value="https://images.unsplash.com/photo-1571068316344-75bc76f77890?auto=format&fit=crop&w=700&q=80">Scooter Compacta Dobrável (Ninebot / Xiaomi)</option>
-                <option value="https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=700&q=80">Scooter Esportiva Alta Potência (5000W)</option>
-                <option value="https://images.unsplash.com/photo-1591637333184-19aa84b3e01f?auto=format&fit=crop&w=700&q=80">Scooter Custom Chopper Fat-Tire</option>
-                <option value="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=700&q=80">Scooter Executiva Prata</option>
+            <div class="field">
+              <label for="categoria">Categoria *</label>
+              <select id="categoria">
+                <option value="Sport">Sport</option>
+                <option value="Urbana">Urbana</option>
+                <option value="Performance">Performance</option>
+                <option value="Chopper">Chopper</option>
+                <option value="Cargo">Cargo</option>
               </select>
             </div>
           </div>
 
-          <div class="form-row">
-            <div class="input-group">
-              <label for="descricao">Descrição / Detalhes do Modelo:</label>
-              <textarea id="descricao" rows="2" placeholder="Freios a disco hidráulicos, painel digital LCD, alarme..."></textarea>
+          <div class="grid-3" style="margin-bottom:1.25rem;">
+            <div class="field">
+              <label for="modelo">Designação do Modelo *</label>
+              <input type="text" id="modelo" placeholder="Ex: VoltScoot X2 RS 4000W" required />
+            </div>
+            <div class="field">
+              <label for="cor">Acabamento / Cor</label>
+              <input type="text" id="cor" value="Preto Carbono" />
+            </div>
+            <div class="field">
+              <label for="status">Status Operacional *</label>
+              <select id="status">
+                <option value="Disponivel">Disponível</option>
+                <option value="Promocao">Promoção</option>
+                <option value="Lancamento">Lançamento</option>
+                <option value="Esgotada">Esgotada</option>
+              </select>
             </div>
           </div>
 
-          <div style="display:flex; gap:0.65rem; flex-wrap:wrap; margin-top:1.1rem;">
+          <div class="panel-head">
+            <span class="panel-title">2. Motorização, Bateria & Telemetria</span>
+          </div>
+          <div class="grid-4" style="margin-bottom:1.25rem;">
+            <div class="field">
+              <label for="potencia">Potência Nominal (W) *</label>
+              <input type="number" id="potencia" value="3000" step="50" required />
+            </div>
+            <div class="field">
+              <label for="torque">Torque (Nm)</label>
+              <input type="number" id="torque" value="145" />
+            </div>
+            <div class="field">
+              <label for="voltagem">Tensão Bateria (V)</label>
+              <input type="number" id="voltagem" value="60" />
+            </div>
+            <div class="field">
+              <label for="amperagem">Capacidade (Ah)</label>
+              <input type="number" id="amperagem" step="0.1" value="30" />
+            </div>
+          </div>
+
+          <div class="grid-4" style="margin-bottom:1.25rem;">
+            <div class="field">
+              <label for="autonomia">Autonomia Homologada (km) *</label>
+              <input type="number" id="autonomia" value="85" required />
+            </div>
+            <div class="field">
+              <label for="velocidadeMax">Velocidade Máx (km/h) *</label>
+              <input type="number" id="velocidadeMax" value="75" required />
+            </div>
+            <div class="field">
+              <label for="tempoRecarga">Ciclo de Recarga (h)</label>
+              <input type="number" id="tempoRecarga" step="0.5" value="4.5" />
+            </div>
+            <div class="field">
+              <label for="protecaoIp">Índice de Proteção</label>
+              <select id="protecaoIp">
+                <option value="IP65">IP65</option>
+                <option value="IP67">IP67</option>
+                <option value="IP55">IP55</option>
+                <option value="IP54">IP54</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="panel-head">
+            <span class="panel-title">3. Ciclística, Custos & Estoque</span>
+          </div>
+          <div class="grid-4" style="margin-bottom:1.25rem;">
+            <div class="field">
+              <label for="freios">Sistema de Freios</label>
+              <input type="text" id="freios" value="Disco Hidráulico CBS" />
+            </div>
+            <div class="field">
+              <label for="pneus">Rodas / Pneus</label>
+              <input type="text" id="pneus" value="12&quot; Tubeless" />
+            </div>
+            <div class="field">
+              <label for="peso">Peso Seco (kg)</label>
+              <input type="number" id="peso" step="0.5" value="68" />
+            </div>
+            <div class="field">
+              <label for="cargaMax">Carga Máx (kg)</label>
+              <input type="number" id="cargaMax" value="180" />
+            </div>
+          </div>
+
+          <div class="grid-4" style="margin-bottom:1.25rem;">
+            <div class="field">
+              <label for="custo">Custo Unitário (R$)</label>
+              <input type="number" id="custo" step="0.01" value="8200.00" />
+            </div>
+            <div class="field">
+              <label for="preco">Preço Público (R$) *</label>
+              <input type="number" id="preco" step="0.01" value="12490.00" required />
+            </div>
+            <div class="field">
+              <label for="estoque">Qtd. em Estoque *</label>
+              <input type="number" id="estoque" value="6" required />
+            </div>
+            <div class="field">
+              <label for="garantia">Garantia</label>
+              <select id="garantia">
+                <option value="24 meses">24 meses</option>
+                <option value="18 meses">18 meses</option>
+                <option value="12 meses">12 meses</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field" style="margin-bottom:1.35rem;">
+            <label for="imagem">Mídia da Unidade</label>
+            <select id="imagem">
+              <option value="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=800&q=80">Chassi Sport Preto Fosco</option>
+              <option value="https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=800&q=80">Chassi Performance Dual Motor</option>
+              <option value="https://images.unsplash.com/photo-1571068316344-75bc76f77890?auto=format&fit=crop&w=800&q=80">Chassi Urbano Compacto</option>
+              <option value="https://images.unsplash.com/photo-1591637333184-19aa84b3e01f?auto=format&fit=crop&w=800&q=80">Chassi Custom Chopper</option>
+              <option value="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=800&q=80">Chassi Executivo Prata</option>
+            </select>
+          </div>
+
+          <div style="display:flex; gap:0.65rem; flex-wrap:wrap;">
             <button type="button" class="btn btn-post" style="flex:1;" onclick="criarScooterPOST()">
-              <span class="badge badge-post">POST</span> Criar Nova Scooter
+              Registrar Nova Unidade (POST)
             </button>
             <button type="button" class="btn btn-put" style="flex:1;" onclick="atualizarScooterPUT()">
-              <span class="badge badge-put">PUT</span> Atualizar Scooter Inteira
+              Substituir Registro Completo (PUT)
             </button>
-            <button type="button" class="btn btn-ghost" onclick="limparFormularioCadastro()">
-              Limpar
+            <button type="button" class="btn btn-outline" onclick="limparFormularioCadastro()">
+              Resetar
             </button>
           </div>
         </form>
       </section>
 
-      <!-- Coluna Direita: Preview ao Vivo + Resposta JSON -->
       <div style="display:flex; flex-direction:column; gap:1.25rem;">
-        <section class="card">
-          <div class="card-header">
-            <h3>👁️ Pré-visualização do Card em Tempo Real</h3>
+        <section class="panel">
+          <div class="panel-head">
+            <span class="panel-title">Renderização da Unidade</span>
           </div>
           <div id="previewScooterBox"></div>
         </section>
 
-        <!-- Inspetor da Requisição POST/PUT enviada -->
-        <section class="card hidden" id="formResponseInspector">
-          <div class="card-header">
-            <h3>📡 Resposta da API Online</h3>
-            <span class="badge badge-post" id="formLogMethod">POST</span>
+        <section class="panel" id="formResponseInspector" style="display:none;">
+          <div class="panel-head">
+            <span class="panel-title">Retorno HTTP</span>
+            <span class="method-tag m-post" id="formLogMethod">POST</span>
           </div>
-          <div class="http-inspector" style="margin-top:0.5rem;">
-            <div class="http-meta">
-              <code class="http-url" id="formLogUrl">https://...</code>
-              <span class="http-status status-ok" id="formLogStatus">201 OK</span>
+          <div class="net-box">
+            <div class="net-bar">
+              <span id="formLogUrl" style="flex:1; word-break:break-all;"></span>
+              <span id="formLogStatus" style="color:var(--brand);">201</span>
             </div>
-            <div class="http-panes" style="grid-template-columns:1fr;">
-              <div class="http-pane">
-                <div class="pane-title">📤 JSON Enviado no Body</div>
+            <div class="net-cols" style="grid-template-columns:1fr;">
+              <div class="net-pane">
+                <div class="net-pane-head">Request Payload</div>
                 <pre id="formLogReq"></pre>
               </div>
-              <div class="http-pane">
-                <div class="pane-title">📥 JSON Retornado pela API</div>
+              <div class="net-pane">
+                <div class="net-pane-head">Response Body</div>
                 <pre id="formLogRes"></pre>
               </div>
             </div>
@@ -217,16 +263,15 @@
     </div>
   </main>
 
-  <!-- Rodapé -->
   <footer class="footer">
     <div class="container footer-inner">
-      <div>⚡ <strong>VoltScoot Scooters Elétricas</strong> — Cadastro & Edição Completa (POST / PUT)</div>
-      <div style="display:flex; gap:1rem;">
-        <a href="index.html">Início</a>
-        <a href="catalogo.html">Catálogo (GET)</a>
-        <a href="cadastro.html">Cadastro (POST/PUT)</a>
-        <a href="manutencao-patch.html">Ajustes (PATCH/DELETE)</a>
-        <a href="api-console.html">API Online</a>
+      <div><strong>VOLTSCOOT MOTORS</strong> — Módulo de Engenharia (POST / PUT)</div>
+      <div style="display:flex; gap:1.25rem;">
+        <a href="index.html">Showroom</a>
+        <a href="catalogo.html">Catálogo</a>
+        <a href="cadastro.html">Engenharia</a>
+        <a href="manutencao-patch.html">Estoque</a>
+        <a href="api-console.html">Pedidos & API</a>
       </div>
     </div>
   </footer>

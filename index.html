@@ -3,188 +3,174 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VoltScoot ⚡ Scooters Elétricas | Início & Showroom</title>
+  <title>VOLTSCOOT MOTORS | Mobilidade Elétrica & Showroom</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- Barra de Navegação Multi-Páginas -->
   <header class="topbar">
     <div class="container topbar-inner">
       <a href="index.html" class="brand">
-        <div class="brand-logo">⚡</div>
+        <div class="brand-mark">VS</div>
         <div>
-          <span class="brand-title">VoltScoot <span class="brand-highlight">Elétricas</span></span>
-          <span class="brand-sub">Concessionária & Sistema CRUD Online</span>
+          <div class="brand-name">VOLT<span>SCOOT</span></div>
+          <span class="brand-tag">Electric Mobility Systems</span>
         </div>
       </a>
 
       <nav class="nav-menu">
-        <a href="index.html" class="nav-link active">🏠 Início</a>
-        <a href="catalogo.html" class="nav-link">🛵 Catálogo <span class="badge badge-get">GET</span></a>
-        <a href="cadastro.html" class="nav-link">➕ Cadastrar / Editar <span class="badge badge-post">POST</span> <span class="badge badge-put">PUT</span></a>
-        <a href="manutencao-patch.html" class="nav-link">⚡ Promoções & Estoque <span class="badge badge-patch">PATCH</span> <span class="badge badge-delete">DEL</span></a>
-        <a href="api-console.html" class="nav-link">🌐 API Online & Logs</a>
+        <a href="index.html" class="nav-link active">Showroom</a>
+        <a href="catalogo.html" class="nav-link">Catálogo & Comparador</a>
+        <a href="cadastro.html" class="nav-link">Engenharia & Cadastro</a>
+        <a href="manutencao-patch.html" class="nav-link">Precificação & Estoque</a>
+        <a href="api-console.html" class="nav-link">Pedidos & Rede API</a>
       </nav>
 
-      <div class="api-status-pill">
-        <span class="status-dot"></span>
-        <span id="apiTopStatusText">API Online: Cloud REST</span>
+      <div class="topbar-right">
+        <button class="cart-trigger" onclick="abrirModalCarrinho()">
+          Pedido <span class="cart-count">0</span>
+        </button>
+        <div class="api-pill">
+          <span class="dot-online"></span>
+          <span id="apiTopStatusText">ONLINE REST API</span>
+        </div>
       </div>
     </div>
   </header>
 
-  <!-- Hero Section -->
-  <section class="hero-home">
-    <div class="container hero-home-grid">
+  <section class="showroom-hero">
+    <div class="container showroom-grid">
       <div>
-        <span class="hero-tag">🔋 O FUTURO DA MOBILIDADE URBANA</span>
-        <h1>Acelere com <span>Zero Emissões</span> e Gestão 100% Online</h1>
-        <div class="hero-cta-group">
-          <a href="catalogo.html" class="btn btn-primary">
-            🛵 Ver Catálogo Completo (GET)
-          </a>
-          <a href="cadastro.html" class="btn btn-secondary">
-            ➕ Cadastrar Nova Scooter (POST)
-          </a>
-          <a href="api-console.html" class="btn btn-ghost">
-            🌐 Configurar CrudCrud / API Online
-          </a>
+        <span class="method-tag m-post">SÉRIE 2026 • PRONTA ENTREGA</span>
+        <h1 class="showroom-title">Engenharia Elétrica de <span>Alta Performance</span></h1>
+
+        <div class="spec-strip">
+          <div class="spec-strip-item">
+            <small>Potência</small>
+            <strong>Até 5000W</strong>
+          </div>
+          <div class="spec-strip-item">
+            <small>Autonomia</small>
+            <strong>Até 120 km</strong>
+          </div>
+          <div class="spec-strip-item">
+            <small>Torque Máx</small>
+            <strong>210 Nm</strong>
+          </div>
+          <div class="spec-strip-item">
+            <small>Proteção</small>
+            <strong>IP67</strong>
+          </div>
+        </div>
+
+        <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+          <a href="catalogo.html" class="btn btn-brand">Explorar Catálogo Técnico</a>
+          <a href="cadastro.html" class="btn btn-dark">Cadastrar Unidade</a>
+          <a href="manutencao-patch.html" class="btn btn-outline">Gestão de Estoque</a>
         </div>
       </div>
 
-      <div class="hero-showcase-box">
-        <img
-          src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=900&q=80"
-          alt="VoltScoot X1 Pro 3000W"
-          style="width:100%; height:240px; object-fit:cover; border-radius:12px; margin-bottom:0.9rem;"
-        />
-        <div style="display:flex; justify-content:space-between; align-items:center;">
+      <div class="featured-stage">
+        <img src="https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?auto=format&fit=crop&w=1000&q=80" alt="ThunderMax AWD 5000W" />
+        <div class="featured-stage-bar">
           <div>
-            <span class="badge badge-post">DESTAQUE</span>
-            <h3 style="margin-top:0.3rem;">VoltScoot X1 Pro 3000W</h3>
-            <p style="font-size:0.8rem; color:#94a3b8;">Autonomia de 75 km • Bateria Lítio 60V Removível</p>
+            <div style="font-size:0.7rem; color:var(--brand); font-weight:700; text-transform:uppercase;">WT-THU-5000 • AWD DUAL MOTOR</div>
+            <div style="font-size:1.1rem; font-weight:800;">ThunderMax AWD 5000W</div>
           </div>
           <div style="text-align:right;">
-            <span style="font-size:0.75rem; color:#94a3b8;">A partir de</span>
-            <div style="font-size:1.35rem; font-weight:800; color:#34d399;">R$ 12.490</div>
+            <div style="font-size:1.25rem; font-weight:800; color:var(--brand);">R$ 18.990,00</div>
+            <div style="font-size:0.7rem; color:var(--text-muted);">72V 45Ah • 95 km/h</div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <main class="container main-content">
-    <!-- Indicadores em Tempo Real da API -->
-    <section class="hero-stats-grid">
-      <div class="stat-card">
-        <span class="stat-label">Modelos Cadastrados (GET)</span>
-        <strong class="stat-value" id="statTotalModelos">0</strong>
+  <main class="container main-wrap">
+    <section class="kpi-row">
+      <div class="kpi-box">
+        <div class="kpi-label">Modelos Homologados</div>
+        <div class="kpi-val" id="statTotalModelos">0</div>
+        <div class="kpi-sub">Sincronizado via GET</div>
       </div>
-      <div class="stat-card">
-        <span class="stat-label">Maior Autonomia</span>
-        <strong class="stat-value" id="statMaxAutonomia">0 km</strong>
+      <div class="kpi-box">
+        <div class="kpi-label">Disponibilidade Física</div>
+        <div class="kpi-val" id="statTotalEstoque">0 un.</div>
+        <div class="kpi-sub">Pronta entrega nacional</div>
       </div>
-      <div class="stat-card">
-        <span class="stat-label">Maior Potência</span>
-        <strong class="stat-value" id="statMaxPotencia">0 W</strong>
+      <div class="kpi-box">
+        <div class="kpi-label">Patrimônio em Estoque</div>
+        <div class="kpi-val" id="statValorEstoque">R$ 0</div>
+        <div class="kpi-sub">Valor comercial ativo</div>
       </div>
-      <div class="stat-card">
-        <span class="stat-label">Total em Estoque</span>
-        <strong class="stat-value" id="statTotalEstoque">0 un.</strong>
-      </div>
-    </section>
-
-    <!-- Scooters em Destaque (Carregadas via GET) -->
-    <section class="card">
-      <div class="card-header">
-        <div>
-          <h2>🔥 Scooters Elétricas em Destaque</h2>
-        </div>
-        <a href="catalogo.html" class="btn btn-get btn-sm">
-          Ver Todas no Catálogo →
-        </a>
-      </div>
-
-      <div id="homeDestaquesGrid" class="scooters-grid"></div>
-    </section>
-
-    <!-- Diferenciais VoltScoot -->
-    <section class="features-grid">
-      <div class="feature-item">
-        <div class="feature-icon">⚡</div>
-        <h3>Recarga em Tomada Comum</h3>
-        <p>Baterias de Lítio inteligentes que recarregam de 0% a 100% entre 4 e 6 horas em qualquer tomada 110V/220V.</p>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon">💰</div>
-        <h3>Menos de R$ 0,03 por Km</h3>
-        <p>Economize até 92% em comparação com gasolina ou transporte por aplicativo no seu trajeto diário.</p>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon">🛡️</div>
-        <h3>Freios Hidráulicos & Alarme</h3>
-        <p>Segurança máxima com freios a disco nas duas rodas, painel digital LCD, trava antifurto e controle remoto.</p>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon">🌐</div>
-        <h3>CRUD Completo Integrado</h3>
-        <p>Gerencie toda a frota usando <strong>GET</strong>, <strong>POST</strong>, <strong>PUT</strong>, <strong>PATCH</strong> e <strong>DELETE</strong> em páginas dedicadas.</p>
+      <div class="kpi-box">
+        <div class="kpi-label">Margem Bruta Projetada</div>
+        <div class="kpi-val" id="statMargemTotal">R$ 0</div>
+        <div class="kpi-sub">Resultado operacional</div>
       </div>
     </section>
 
-    <!-- Calculadora Interativa de Economia -->
-    <section class="card">
-      <div class="card-header">
-        <div>
-          <h2>🧮 Simulador de Economia: Scooter Elétrica vs. Combustível</h2>
-        </div>
+    <section class="panel">
+      <div class="panel-head">
+        <span class="panel-title">Linha em Destaque</span>
+        <a href="catalogo.html" class="btn btn-outline btn-sm">Ver Frota Completa →</a>
       </div>
+      <div id="homeDestaquesGrid" class="catalog-grid"></div>
+    </section>
 
-      <div class="calc-grid">
-        <div>
-          <div class="form-row">
-            <div class="input-group">
-              <label for="calcKmDia">Distância percorrida por dia: <strong id="calcKmValor" style="color:#34d399;">30 km/dia</strong></label>
-              <input type="range" id="calcKmDia" min="5" max="100" step="5" value="30" oninput="calcularEconomiaScooter()" />
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="input-group">
-              <label for="calcPrecoGas">Preço médio do litro da gasolina (R$):</label>
-              <input type="number" id="calcPrecoGas" step="0.10" value="6.10" oninput="calcularEconomiaScooter()" />
-            </div>
-          </div>
+    <section class="panel">
+      <div class="panel-head">
+        <span class="panel-title">Simulador Comercial CDC & PIX Corporativo</span>
+      </div>
+      <div class="grid-4" style="align-items:end;">
+        <div class="field">
+          <label for="finValorScooter">Modelo / Valor Base</label>
+          <select id="finValorScooter" onchange="calcularSimulacaoFinanciamento()">
+            <option value="4990">Xiaomi Scooter 4 Ultra — R$ 4.990</option>
+            <option value="5890">Ninebot Max G2 Pro — R$ 5.890</option>
+            <option value="9790">Chopper Cruiser 2000W — R$ 9.790</option>
+            <option value="12490" selected>VoltScoot X1 Pro Dual — R$ 12.490</option>
+            <option value="13290">VoltScoot Cargo Fleet — R$ 13.290</option>
+            <option value="18990">ThunderMax AWD 5000W — R$ 18.990</option>
+          </select>
         </div>
-
-        <div class="calc-result-box">
-          <span class="stat-label">Economia Estimada por Mês</span>
-          <div class="calc-big-value" id="resEconomiaMes">R$ 0,00</div>
-          <p style="font-size:0.86rem; color:#cbd5e1;">
-            Em 1 ano você economiza aproximadamente <strong id="resEconomiaAno" style="color:#38bdf8;">R$ 0,00</strong>!
-          </p>
+        <div class="field">
+          <label for="finEntrada">Entrada (R$)</label>
+          <input type="number" id="finEntrada" value="3000" step="500" min="0" oninput="calcularSimulacaoFinanciamento()" />
+        </div>
+        <div class="field">
+          <label for="finParcelas">Prazo CDC</label>
+          <select id="finParcelas" onchange="calcularSimulacaoFinanciamento()">
+            <option value="12">12 meses (1.49% a.m.)</option>
+            <option value="24" selected>24 meses (1.49% a.m.)</option>
+            <option value="36">36 meses (1.49% a.m.)</option>
+            <option value="48">48 meses (1.49% a.m.)</option>
+          </select>
+        </div>
+        <div class="kpi-box" style="padding:0.75rem 1rem;">
+          <div class="kpi-label">Parcela / À Vista PIX (-5%)</div>
+          <div style="font-size:1rem; font-weight:800; color:var(--brand); font-family:'JetBrains Mono',monospace;" id="resValorParcela">24x</div>
+          <div style="font-size:0.75rem; color:var(--text-secondary);">PIX: <strong id="resValorPix">R$ 0</strong></div>
         </div>
       </div>
     </section>
   </main>
 
-  <!-- Modal de Ficha Técnica (GET /:id) -->
-  <div id="modalFichaTecnica" class="modal-overlay hidden" onclick="if(event.target===this) fecharModalFichaTecnica()">
-    <div class="modal-box" id="modalFichaConteudo"></div>
+  <div id="modalFichaTecnica" class="modal-backdrop hidden" onclick="if(event.target===this) fecharModalFichaTecnica()">
+    <div class="modal-card" id="modalFichaConteudo"></div>
   </div>
 
-  <!-- Rodapé -->
   <footer class="footer">
     <div class="container footer-inner">
-      <div>⚡ <strong>VoltScoot Scooters Elétricas</strong> — Projeto Multi-Páginas CRUD (GET, POST, PUT, PATCH, DELETE)</div>
-      <div style="display:flex; gap:1rem;">
-        <a href="index.html">Início</a>
-        <a href="catalogo.html">Catálogo (GET)</a>
-        <a href="cadastro.html">Cadastro (POST/PUT)</a>
-        <a href="manutencao-patch.html">Ajustes (PATCH/DELETE)</a>
-        <a href="api-console.html">API Online</a>
+      <div><strong>VOLTSCOOT MOTORS</strong> — Sistema Integrado de Mobilidade Elétrica</div>
+      <div style="display:flex; gap:1.25rem;">
+        <a href="index.html">Showroom</a>
+        <a href="catalogo.html">Catálogo</a>
+        <a href="cadastro.html">Engenharia</a>
+        <a href="manutencao-patch.html">Estoque</a>
+        <a href="api-console.html">Pedidos & API</a>
       </div>
     </div>
   </footer>
